@@ -46,12 +46,10 @@ class ApiResponse {
             $totalCount = count($this->results);
         }
         $this->totalCount = $totalCount;
-
         if (is_null($filterCount)) {
             $filterCount = $totalCount;
         }
         $this->filterCount = $filterCount;
-
         $this->errors = new MessageBag();
     }
 

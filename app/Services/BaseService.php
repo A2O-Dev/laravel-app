@@ -38,7 +38,6 @@ class BaseService {
         foreach ($messageList as $key => $message) {
             $errorMessageList[] = "$key: " . implode(', ', $message);
         }
-
         return implode(', ', $errorMessageList);
     }
 }

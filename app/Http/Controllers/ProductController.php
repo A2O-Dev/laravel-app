@@ -30,10 +30,70 @@ class ProductController extends Controller {
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/products",
+     *     tags={"products"},
+     *     summary="Mostrar el listado de productos",
+     *     @OA\Parameter(
+     *         description="Size of page",
+     *         in="query",
+     *         name="page_size",
+     *         @OA\Schema(type="string"),
+     *         @OA\Examples(example="int", value=5, summary="Introduce un tamaño de la página.")
+     *     ),
+     *     @OA\Parameter(
+     *         description="Current page",
+     *         in="query",
+     *         name="current_page",
+     *         @OA\Schema(type="string"),
+     *         @OA\Examples(example="int", value=0, summary="Introduce la página actual.")
+     *     ),
+     *     @OA\Parameter(
+     *         description="Column order",
+     *         in="query",
+     *         name="column",
+     *         @OA\Schema(type="string"),
+     *         @OA\Examples(example="string", value="id", summary="Introduce la columna para ordernar.")
+     *     ),
+     *     @OA\Parameter(
+     *         description="Order direction",
+     *         in="query",
+     *         name="direction",
+     *         @OA\Schema(type="string"),
+     *         @OA\Examples(example="string", value="asc", summary="Ordernar de forma ascendente.")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mostrar productos."
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="Ha ocurrido un error."
+     *     )
+     * )
      */
-    public function index() {
-        //
+    public function index(Request $request) {
+        $apiRes = new ApiResponse('Product');
+        $results = $this->productService->get(
+            $request->get('page_size', 5),
+            $request->get('current_page', 0),
+            $request->get('column', 'id'),
+            $request->get('direction', 'asc')
+        );
+        $filterCount = count($results);
+        $totalCount = count($results);
+        $status = 200;
+        if ($this->productService->hasErrors()) {
+            $apiRes->errors->merge($this->productService->getErrors());
+            $status = 400;
+            $filterCount = 0;
+            $totalCount = 0;
+        }
+        $apiRes->results = $results;
+        $apiRes->filterCount = $filterCount;
+        $apiRes->totalCount = $totalCount;
+        return response()->json($apiRes, $status);
     }
 
     /**
