@@ -1,0 +1,48 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Documentación de Productos",
+        "description": "Description de productos.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/products/{product}": {
+            "get": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Mostrar información de un producto",
+                "description": "Display the specified resource.",
+                "operationId": "05f6ffcb49f47b4f4fc1a1c21ed60011",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Parámetro necesario para la consulta de datos de un producto",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Introduce un número de id de un producto.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mostrar info de un producto."
+                    },
+                    "404": {
+                        "description": "No se ha encontrado el producto."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                }
+            }
+        }
+    }
+}
