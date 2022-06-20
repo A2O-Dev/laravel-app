@@ -94,12 +94,29 @@ class ProductService extends BaseService {
         } else {
             try {
                 $product->update($data);
-                $product->save();
             } catch (Exception $e) {
                 $this->errors->add('not-updated', $e->getMessage());
             }
         }
         return $product;
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function deleteById($id) {
+        $successfully = false;
+        $product = $this->getById($id);
+        if ($this->hasErrors()) {
+            return $successfully;
+        }
+        try {
+            $successfully = $product->delete();
+        } catch (Exception $e) {
+            $this->errors->add('not-deleted', $e->getMessage());
+        }
+        return $successfully;
     }
 
 }

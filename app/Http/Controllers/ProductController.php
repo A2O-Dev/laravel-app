@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
-use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -306,10 +305,50 @@ class ProductController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param Product $product
-     * @return Response
+     * @param int $id
+     * @return JsonResponse
+     * @OA\Delete(
+     *     path="/api/products/{product}",
+     *     tags={"products"},
+     *     summary="Delete a product",
+     *     @OA\Parameter(
+     *         description="Product ID",
+     *         in="path",
+     *         name="product",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product delete successfully."
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found."
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error."
+     *     )
+     * )
      */
-    public function destroy(Product $product) {
-        //
+    public function destroy($id) {
+        $apiRes = new ApiResponse('Product');
+        $results = $this->productService->deleteById($id) ?? [];
+        $filterCount = 1;
+        $totalCount = 1;
+        $status = 200;
+        if ($this->productService->hasErrors()) {
+            $apiRes->errors->merge($this->productService->getErrors());
+            if ($apiRes->errors->has('not-found')) {
+                $status = 404;
+            }
+            $filterCount = 0;
+            $totalCount = 0;
+        }
+        $apiRes->results = $results;
+        $apiRes->filterCount = $filterCount;
+        $apiRes->totalCount = $totalCount;
+        return response()->json($apiRes, $status);
     }
 }
