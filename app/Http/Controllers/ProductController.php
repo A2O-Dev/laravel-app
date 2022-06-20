@@ -224,11 +224,83 @@ class ProductController extends Controller {
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Product $product
-     * @return Response
+     * @param $id
+     * @return JsonResponse
+     * @OA\Put(
+     *     path="/api/products/{product}",
+     *     tags={"products"},
+     *     summary="Update product",
+     *     @OA\Parameter(
+     *         description="Product ID",
+     *         in="path",
+     *         name="product",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                  required={"name", "code", "price"},
+     *                  @OA\Property(
+     *                      property="name",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="code",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="price",
+     *                      type="number"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="dimensions",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="colors",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="tags",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="stock",
+     *                      type="number"
+     *                  )
+     *              )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Show product created."
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error."
+     *     )
+     * )
      */
-    public function update(Request $request, Product $product) {
-        //
+    public function update(Request $request, $id) {
+        $apiRes = new ApiResponse('Product');
+        $results = $this->productService->updateById($id, $request->all()) ?? [];
+        $filterCount = 1;
+        $totalCount = 1;
+        $status = 200;
+        if ($this->productService->hasErrors()) {
+            $apiRes->errors->merge($this->productService->getErrors());
+            if ($apiRes->errors->has('not-found')) {
+                $status = 404;
+            }
+            $filterCount = 0;
+            $totalCount = 0;
+        }
+        $apiRes->results = $results;
+        $apiRes->filterCount = $filterCount;
+        $apiRes->totalCount = $totalCount;
+        return response()->json($apiRes, $status);
     }
 
     /**

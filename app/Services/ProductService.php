@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProductService extends BaseService {
 
@@ -65,6 +66,38 @@ class ProductService extends BaseService {
         $product = $this->productRepository->getById($id);
         if (is_null($product)) {
             $this->errors->add('not-found', 'The product is not found');
+        }
+        return $product;
+    }
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @return Product|null
+     */
+    public function updateById($id, $data) {
+        $product = $this->getById($id);
+        if ($this->hasErrors()) {
+            return $product;
+        }
+        $validator = Validator::make($data, [
+            'name' => 'required|string',
+            'code' => [
+                'required',
+                'string',
+                Rule::unique('products')->ignore($product->id)
+            ],
+            'price' => 'required|numeric'
+        ]);
+        if ($validator->fails()) {
+            $this->errors->merge($validator->getMessageBag());
+        } else {
+            try {
+                $product->update($data);
+                $product->save();
+            } catch (Exception $e) {
+                $this->errors->add('not-updated', $e->getMessage());
+            }
         }
         return $product;
     }
