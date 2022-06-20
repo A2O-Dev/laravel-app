@@ -6,13 +6,11 @@ use App\Helpers\ApiResponse;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="Documentación de Productos",
- *      description="Description de productos.",
+ *      title="Products Documentation"
  * )
  */
 class ProductController extends Controller {
@@ -27,48 +25,38 @@ class ProductController extends Controller {
 
 
     /**
-     * Display a listing of the resource.
-     *
      * @return JsonResponse
      * @OA\Get(
      *     path="/api/products",
      *     tags={"products"},
-     *     summary="Mostrar el listado de productos",
+     *     summary="Show a list of products",
      *     @OA\Parameter(
      *         description="Size of page",
      *         in="query",
      *         name="page_size",
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="int", value=5, summary="Introduce un tamaño de la página.")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Parameter(
      *         description="Current page",
      *         in="query",
      *         name="current_page",
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="int", value=0, summary="Introduce la página actual.")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Parameter(
-     *         description="Column order",
+     *         description="Column to order",
      *         in="query",
      *         name="column",
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="id", summary="Introduce la columna para ordernar.")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Parameter(
      *         description="Order direction",
      *         in="query",
      *         name="direction",
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="asc", summary="Ordernar de forma ascendente.")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Mostrar productos."
-     *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description="Ha ocurrido un error."
+     *         description="Show products."
      *     )
      * )
      */
@@ -96,8 +84,6 @@ class ProductController extends Controller {
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
      * @param Request $request
      * @return JsonResponse
      * @OA\Post(
@@ -169,33 +155,26 @@ class ProductController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     *
      * @param int $id
      * @return JsonResponse
      * @OA\Get(
      *     path="/api/products/{product}",
      *     tags={"products"},
-     *     summary="Mostrar información de un producto",
+     *     summary="Show information of a product",
      *     @OA\Parameter(
-     *         description="Parámetro necesario para la consulta de datos de un producto",
+     *         description="Product ID",
      *         in="path",
      *         name="product",
      *         required=true,
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="int", value="1", summary="Introduce un número de id de un producto.")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Mostrar info de un producto."
+     *         description="Show product information."
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="No se ha encontrado el producto."
-     *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description="Ha ocurrido un error."
+     *         description="Product not found."
      *     )
      * )
      */
@@ -220,15 +199,13 @@ class ProductController extends Controller {
     }
 
     /**
-     * Update the specified resource in storage.
-     *
      * @param Request $request
      * @param $id
      * @return JsonResponse
      * @OA\Put(
      *     path="/api/products/{product}",
      *     tags={"products"},
-     *     summary="Update product",
+     *     summary="Update a product",
      *     @OA\Parameter(
      *         description="Product ID",
      *         in="path",
@@ -274,7 +251,11 @@ class ProductController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Show product created."
+     *         description="Show product with data updated."
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found."
      *     ),
      *     @OA\Response(
      *         response="400",
@@ -303,8 +284,6 @@ class ProductController extends Controller {
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
      * @param int $id
      * @return JsonResponse
      * @OA\Delete(

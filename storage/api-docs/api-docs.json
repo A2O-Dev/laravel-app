@@ -1,8 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Documentación de Productos",
-        "description": "Description de productos.",
+        "title": "Products Documentation",
         "version": "1.0.0"
     },
     "paths": {
@@ -11,8 +10,7 @@
                 "tags": [
                     "products"
                 ],
-                "summary": "Mostrar el listado de productos",
-                "description": "Display a listing of the resource.",
+                "summary": "Show a list of products",
                 "operationId": "1bfaa78d1c2c3848ab8165c5dadcad3e",
                 "parameters": [
                     {
@@ -21,12 +19,6 @@
                         "description": "Size of page",
                         "schema": {
                             "type": "string"
-                        },
-                        "examples": {
-                            "int": {
-                                "summary": "Introduce un tamaño de la página.",
-                                "value": 5
-                            }
                         }
                     },
                     {
@@ -35,26 +27,14 @@
                         "description": "Current page",
                         "schema": {
                             "type": "string"
-                        },
-                        "examples": {
-                            "int": {
-                                "summary": "Introduce la página actual.",
-                                "value": 0
-                            }
                         }
                     },
                     {
                         "name": "column",
                         "in": "query",
-                        "description": "Column order",
+                        "description": "Column to order",
                         "schema": {
                             "type": "string"
-                        },
-                        "examples": {
-                            "string": {
-                                "summary": "Introduce la columna para ordernar.",
-                                "value": "id"
-                            }
                         }
                     },
                     {
@@ -63,21 +43,12 @@
                         "description": "Order direction",
                         "schema": {
                             "type": "string"
-                        },
-                        "examples": {
-                            "string": {
-                                "summary": "Ordernar de forma ascendente.",
-                                "value": "asc"
-                            }
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Mostrar productos."
-                    },
-                    "default": {
-                        "description": "Ha ocurrido un error."
+                        "description": "Show products."
                     }
                 }
             },
@@ -86,7 +57,6 @@
                     "products"
                 ],
                 "summary": "Create a new product",
-                "description": "Store a newly created resource in storage.",
                 "operationId": "e8185e307706e2cd84bbcf5171e2f09d",
                 "requestBody": {
                     "content": {
@@ -140,35 +110,25 @@
                 "tags": [
                     "products"
                 ],
-                "summary": "Mostrar información de un producto",
-                "description": "Display the specified resource.",
+                "summary": "Show information of a product",
                 "operationId": "05f6ffcb49f47b4f4fc1a1c21ed60011",
                 "parameters": [
                     {
                         "name": "product",
                         "in": "path",
-                        "description": "Parámetro necesario para la consulta de datos de un producto",
+                        "description": "Product ID",
                         "required": true,
                         "schema": {
                             "type": "string"
-                        },
-                        "examples": {
-                            "int": {
-                                "summary": "Introduce un número de id de un producto.",
-                                "value": "1"
-                            }
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Mostrar info de un producto."
+                        "description": "Show product information."
                     },
                     "404": {
-                        "description": "No se ha encontrado el producto."
-                    },
-                    "default": {
-                        "description": "Ha ocurrido un error."
+                        "description": "Product not found."
                     }
                 }
             },
@@ -176,8 +136,7 @@
                 "tags": [
                     "products"
                 ],
-                "summary": "Update product",
-                "description": "Update the specified resource in storage.",
+                "summary": "Update a product",
                 "operationId": "c474d1318e5b8c3de1f4d52b6053111f",
                 "parameters": [
                     {
@@ -229,7 +188,10 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Show product created."
+                        "description": "Show product with data updated."
+                    },
+                    "404": {
+                        "description": "Product not found."
                     },
                     "400": {
                         "description": "Error."
@@ -241,7 +203,6 @@
                     "products"
                 ],
                 "summary": "Delete a product",
-                "description": "Remove the specified resource from storage.",
                 "operationId": "1a0a353d0842ff4f9347bb66ec53e3ea",
                 "parameters": [
                     {
