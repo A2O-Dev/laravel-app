@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -45,7 +46,32 @@ class ProductService extends BaseService {
     /**
      * @return Product[]
      */
-    public function get($pageSize, $currentPage, $col, $dir) {
+    public function get($data = []) {
+        $validator = Validator::make($data, [
+            'page_size' => 'numeric',
+            'current_page' => 'numeric',
+            'column' => [
+                'string',
+                Rule::in([
+                    'name',
+                    'code',
+                    'price',
+                    'stock'
+                ])
+            ],
+            'direction' => [
+                'string',
+                Rule::in(['asc', 'desc'])
+            ]
+        ]);
+        if ($validator->fails()) {
+            $this->errors->merge($validator->getMessageBag());
+            return [];
+        }
+        $pageSize = Arr::get($data, 'page_size', 5);
+        $currentPage = Arr::get($data, 'current_page', 0);
+        $col = Arr::get($data, 'column', 'id');
+        $dir = Arr::get($data, 'direction', 'asc');
         $limit = $pageSize;
         $offset = $currentPage * $limit;
         $order[] = ['col' => $col, 'dir' => $dir];

@@ -29,6 +29,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     summary="Show a list of products",
      *     @OA\Parameter(
      *         description="Size of page",
@@ -62,12 +63,7 @@ class ProductController extends Controller {
      */
     public function index(Request $request) {
         $apiRes = new ApiResponse('Product');
-        $results = $this->productService->get(
-            $request->get('page_size', 5),
-            $request->get('current_page', 0),
-            $request->get('column', 'id'),
-            $request->get('direction', 'asc')
-        );
+        $results = $this->productService->get($request->all());
         $filterCount = count($results);
         $totalCount = count($results);
         $status = 200;
@@ -89,6 +85,7 @@ class ProductController extends Controller {
      * @OA\Post(
      *     path="/api/products",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     summary="Create a new product",
      *     @OA\RequestBody(
      *          @OA\MediaType(
@@ -160,6 +157,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     summary="Show information of a product",
      *     @OA\Parameter(
      *         description="Product ID",
@@ -205,6 +203,7 @@ class ProductController extends Controller {
      * @OA\Put(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     summary="Update a product",
      *     @OA\Parameter(
      *         description="Product ID",
@@ -289,6 +288,7 @@ class ProductController extends Controller {
      * @OA\Delete(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     summary="Delete a product",
      *     @OA\Parameter(
      *         description="Product ID",
