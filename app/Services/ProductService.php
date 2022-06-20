@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class ProductService extends BaseService {
 
@@ -15,6 +16,29 @@ class ProductService extends BaseService {
         private ProductRepository $productRepository
     ) {
         parent::__construct();
+    }
+
+    /**
+     * @param array $data
+     * @return Product|null
+     */
+    public function create($data = []) {
+        $validator = Validator::make($data, [
+            'name' => 'required|string',
+            'code' => 'required|string|unique:products',
+            'price' => 'required|numeric'
+        ]);
+        $product = null;
+        if ($validator->fails()) {
+            $this->errors->merge($validator->getMessageBag());
+        } else {
+            try {
+                $product = Product::create($data);
+            } catch (Exception $e) {
+                $this->errors->add('not-save', $e->getMessage());
+            }
+        }
+        return $product;
     }
 
     /**

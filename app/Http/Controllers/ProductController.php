@@ -100,10 +100,24 @@ class ProductController extends Controller {
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Response
+     * @return JsonResponse
      */
     public function store(Request $request) {
-        //
+        $apiRes = new ApiResponse('Product');
+        $results = $this->productService->create($request->all());
+        $filterCount = 1;
+        $totalCount = 1;
+        $status = 200;
+        if ($this->productService->hasErrors()) {
+            $apiRes->errors->merge($this->productService->getErrors());
+            $status = 400;
+            $filterCount = 0;
+            $totalCount = 0;
+        }
+        $apiRes->results = $results;
+        $apiRes->filterCount = $filterCount;
+        $apiRes->totalCount = $totalCount;
+        return response()->json($apiRes, $status);
     }
 
     /**
