@@ -101,6 +101,55 @@ class ProductController extends Controller {
      *
      * @param Request $request
      * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/products",
+     *     tags={"products"},
+     *     summary="Create a new product",
+     *     @OA\RequestBody(
+     *          @OA\MediaType(
+     *              mediaType="multipart/form-data",
+     *              @OA\Schema(
+     *                  required={"name", "code", "price"},
+     *                  @OA\Property(
+     *                      property="name",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="code",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="price",
+     *                      type="number"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="dimensions",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="colors",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="tags",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="stock",
+     *                      type="number"
+     *                  )
+     *              )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Show product created."
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error."
+     *     )
+     * )
      */
     public function store(Request $request) {
         $apiRes = new ApiResponse('Product');
