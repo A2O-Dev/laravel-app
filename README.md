@@ -19,7 +19,7 @@ sudo chmod -R 777 storage
 3. Install dependencies
 
 ```shell
-docker run --volume $PWD:/app composer:2.3.7 composer install
+docker run --rm --volume $PWD:/app composer:2.3.7 composer install
 ```
 
 4. Up containers
@@ -46,6 +46,22 @@ docker compose exec app php artisan migrate --seed
 docker compose exec app php artisan passport:install
 ```
 
-8. Go To Api Documentation
+8. Generate Api Documentation
+
+Change in .env file the next environment variable
+
+```
+APP_URL
+```
+
+Change by your server o localhost url (http://localhost | http://54.652.12.36)
+
+Now generate the Api documentation
+
+```shell
+docker compose exec app php artisan l5-swagger:generate
+```
+
+9. Go To Api Documentation
 
    By Default the api documentation is served in: http://localhost/api/documentation
