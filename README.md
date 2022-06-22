@@ -34,6 +34,18 @@ docker compose up -d
 docker compose exec app php artisan key:generate
 ```
 
-6. Go To Page
+6. Migrate and seed the database
 
-   By Default the app is served in: http://localhost/
+```shell
+docker compose exec app php artisan migrate --seed
+```
+
+7. Generate client credentials for the authentication
+
+```shell
+docker compose exec app php artisan passport:install
+```
+
+8. Go To Api Documentation
+
+   By Default the api documentation is served in: http://localhost/api/documentation
