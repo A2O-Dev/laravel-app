@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Info(
@@ -72,7 +73,9 @@ class ProductController extends Controller {
         $totalCount = count($results);
         $status = 200;
         if ($this->productService->hasErrors()) {
-            $apiRes->errors->merge($this->productService->getErrors());
+            $errorList = $this->productService->getErrors();
+            $apiRes->errors->merge($errorList);
+            Log::error($errorList);
             $status = 400;
             $filterCount = 0;
             $totalCount = 0;
@@ -148,7 +151,9 @@ class ProductController extends Controller {
         $totalCount = 1;
         $status = 200;
         if ($this->productService->hasErrors()) {
-            $apiRes->errors->merge($this->productService->getErrors());
+            $errorList = $this->productService->getErrors();
+            $apiRes->errors->merge($errorList);
+            Log::error($errorList);
             $status = 400;
             $filterCount = 0;
             $totalCount = 0;
@@ -195,7 +200,9 @@ class ProductController extends Controller {
         $totalCount = 1;
         $status = 200;
         if ($this->productService->hasErrors()) {
-            $apiRes->errors->merge($this->productService->getErrors());
+            $errorList = $this->productService->getErrors();
+            $apiRes->errors->merge($errorList);
+            Log::error($errorList);
             if ($apiRes->errors->has('not-found')) {
                 $status = 404;
             }
@@ -285,7 +292,9 @@ class ProductController extends Controller {
         $totalCount = 1;
         $status = 200;
         if ($this->productService->hasErrors()) {
-            $apiRes->errors->merge($this->productService->getErrors());
+            $errorList = $this->productService->getErrors();
+            $apiRes->errors->merge($errorList);
+            Log::error($errorList);
             if ($apiRes->errors->has('not-found')) {
                 $status = 404;
             }
@@ -338,7 +347,9 @@ class ProductController extends Controller {
         $totalCount = 1;
         $status = 200;
         if ($this->productService->hasErrors()) {
-            $apiRes->errors->merge($this->productService->getErrors());
+            $errorList = $this->productService->getErrors();
+            $apiRes->errors->merge($errorList);
+            Log::error($errorList);
             if ($apiRes->errors->has('not-found')) {
                 $status = 404;
             }

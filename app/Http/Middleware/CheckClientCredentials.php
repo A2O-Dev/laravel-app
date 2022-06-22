@@ -7,6 +7,7 @@ use Closure;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Laravel\Passport\Exceptions\MissingScopeException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentials as Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,7 @@ class CheckClientCredentials extends Middleware {
             $apiRes = new ApiResponse('Auth');
             $apiRes->results = Auth::check();
             $apiRes->errors->add('unauthenticated', 'You need authentication');
+            Log::error('Unauthenticated request attempt');
             return response()->json($apiRes, 401);
         }
 
