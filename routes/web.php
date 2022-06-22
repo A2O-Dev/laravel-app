@@ -12,3 +12,5 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::redirect('/', config('l5-swagger.documentations.default.routes.api', 'api/documentation'));
