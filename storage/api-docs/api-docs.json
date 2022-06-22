@@ -262,7 +262,7 @@
                 "in": "header",
                 "scheme": "https",
                 "flows": {
-                    "password": {
+                    "clientCredentials": {
                         "authorizationUrl": "http://localhost/oauth/authorize",
                         "tokenUrl": "http://localhost/oauth/token",
                         "refreshUrl": "http://localhost/token/refresh",
