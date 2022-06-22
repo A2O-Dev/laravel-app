@@ -58,6 +58,10 @@ class ProductController extends Controller {
      *     @OA\Response(
      *         response=200,
      *         description="Show products."
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated."
      *     )
      * )
      */
@@ -130,6 +134,10 @@ class ProductController extends Controller {
      *     @OA\Response(
      *         response="400",
      *         description="Error."
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated."
      *     )
      * )
      */
@@ -169,6 +177,10 @@ class ProductController extends Controller {
      *     @OA\Response(
      *         response=200,
      *         description="Show product information."
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated."
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -253,12 +265,16 @@ class ProductController extends Controller {
      *         description="Show product with data updated."
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Product not found."
-     *     ),
-     *     @OA\Response(
      *         response="400",
      *         description="Error."
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated."
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found."
      *     )
      * )
      */
@@ -302,12 +318,16 @@ class ProductController extends Controller {
      *         description="Product delete successfully."
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Product not found."
-     *     ),
-     *     @OA\Response(
      *         response="400",
      *         description="Error."
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated."
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found."
      *     )
      * )
      */

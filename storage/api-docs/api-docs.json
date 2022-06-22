@@ -49,6 +49,9 @@
                 "responses": {
                     "200": {
                         "description": "Show products."
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
                     }
                 },
                 "security": [
@@ -106,6 +109,9 @@
                     },
                     "400": {
                         "description": "Error."
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
                     }
                 },
                 "security": [
@@ -136,6 +142,9 @@
                 "responses": {
                     "200": {
                         "description": "Show product information."
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
                     },
                     "404": {
                         "description": "Product not found."
@@ -205,11 +214,14 @@
                     "200": {
                         "description": "Show product with data updated."
                     },
-                    "404": {
-                        "description": "Product not found."
-                    },
                     "400": {
                         "description": "Error."
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "404": {
+                        "description": "Product not found."
                     }
                 },
                 "security": [
@@ -239,11 +251,14 @@
                     "200": {
                         "description": "Product delete successfully."
                     },
-                    "404": {
-                        "description": "Product not found."
-                    },
                     "400": {
                         "description": "Error."
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "404": {
+                        "description": "Product not found."
                     }
                 },
                 "security": [
