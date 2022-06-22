@@ -70,7 +70,7 @@ class ProductController extends Controller {
         $apiRes = new ApiResponse('Product');
         $results = $this->productService->get($request->all());
         $filterCount = count($results);
-        $totalCount = count($results);
+        $totalCount = $this->productService->getLastTotalCount();
         $status = 200;
         if ($this->productService->hasErrors()) {
             $errorList = $this->productService->getErrors();

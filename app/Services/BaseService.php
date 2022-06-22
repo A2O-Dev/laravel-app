@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
 
 class BaseService {
@@ -39,5 +40,14 @@ class BaseService {
             $errorMessageList[] = "$key: " . implode(', ', $message);
         }
         return implode(', ', $errorMessageList);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastTotalCount() {
+        return collect(DB::select(DB::raw('SELECT FOUND_ROWS() as totalCount')))
+            ->pluck('totalCount')
+            ->max();
     }
 }
