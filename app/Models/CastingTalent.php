@@ -14,7 +14,7 @@ use LaravelDoctrine\Extensions\Timestamps\Timestamps;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="role_call_talents")
+ * @ORM\Table(name="casting_talents")
  */
 class CastingTalent extends BaseModel
 {

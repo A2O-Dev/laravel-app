@@ -107,8 +107,8 @@ class CastingTalentRepository extends BaseRepository
     public function countAllByCastingDirector(CastingDirector $castingDirector, $status = null){
         $params = [];
         $sql = "Select count(rct.id) as total
-                from role_call_talents rct
-                inner join role_calls rc on rct.casting_id = rc.id
+                from casting_talents rct
+                inner join castings rc on rct.casting_id = rc.id
                 inner join casting_directors cd on rc.castingDirector_id = cd.id
                 WHERE cd.id = ? ";
         $params[] = $castingDirector->getId();

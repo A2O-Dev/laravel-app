@@ -17,7 +17,7 @@ use LaravelDoctrine\Extensions\SoftDeletes\SoftDeletes;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="role_calls")
+ * @ORM\Table(name="castings")
  * @deprecated
  */
 class Casting extends BaseModel

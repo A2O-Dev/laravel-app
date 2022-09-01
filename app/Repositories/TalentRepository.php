@@ -50,7 +50,7 @@ class TalentRepository extends BaseRepository
             inner join talent_casting_types trt on trt.talent_id = t.id
             inner join talent_project_types tpt on tpt.talent_id = t.id
             inner join talent_casting_attribute_values trav on trav.talent_id = t.id
-            left join role_call_talents rt on rt.talent_id = t.id and rt.casting_id = ?
+            left join casting_talents rt on rt.talent_id = t.id and rt.casting_id = ?
         ";
 
         $paramCount++;
@@ -86,7 +86,7 @@ class TalentRepository extends BaseRepository
         }
 
         // restrict casting type
-        $sqlWhere = " where trt.role_call_type_id = ? ";
+        $sqlWhere = " where trt.casting_type_id = ? ";
         $paramCount++;
         $query->setParameter($paramCount, $casting->getType()->getId(), Type::INTEGER);
 

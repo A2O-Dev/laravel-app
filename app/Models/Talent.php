@@ -94,7 +94,7 @@ class Talent extends BaseModel
      * @ORM\ManyToMany(targetEntity="CastingType")
      * @ORM\JoinTable(name="talent_casting_types",
      *      joinColumns={@ORM\JoinColumn(name="talent_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="role_call_type_id", referencedColumnName="id")}
+     *      inverseJoinColumns={@ORM\JoinColumn(name="casting_type_id", referencedColumnName="id")}
      *      )
      */
     private $castingTypes;
