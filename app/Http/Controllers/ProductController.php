@@ -19,7 +19,9 @@ class ProductController extends Controller {
     /**
      * @param ProductService $productService
      */
-    public function __construct( ProductService $productService ) {
+    public function __construct(
+        private ProductService $productService
+    ) {
     }
 
 
