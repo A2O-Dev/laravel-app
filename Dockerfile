@@ -19,15 +19,18 @@ RUN php artisan key:generate
 
 # Setting supervisord
 RUN mkdir -p /var/log/supervisor
-COPY --chmod=0777 docker/app/config/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY --chmod=0777 docker/app/config/supervisor/schedule.sh /etc/supervisor/conf.d/schedule.sh
+COPY --chmod=0777 docker/app/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY --chmod=0777 docker/app/supervisor/schedule.sh /etc/supervisor/conf.d/schedule.sh
 
 # Setting nginx
-COPY --chmod=0777 docker/app/config/nginx/default.conf /etc/nginx/http.d/default.conf
+COPY --chmod=0777 docker/app/nginx/default.conf /etc/nginx/http.d/default.conf
 
 # Setting permissions
 RUN chmod 777 -R /var/www/html/storage
 RUN chmod 777 -R /var/www/html/public
+
+# Generate swagger
+RUN php artisan l5-swagger:generate
 
 RUN apk add -U --no-cache \
         libpng-dev \
