@@ -14,6 +14,11 @@ use App\Http\Controllers\ProductController;
 |
 */
 
+Route::get('routes', function () {
+    $routeList = Route::getRoutes()->get();
+    return response()->json(['results' => $routeList]);
+});
+
 Route::middleware('client')->group(function () {
     Route::apiResources([
         'products' => ProductController::class

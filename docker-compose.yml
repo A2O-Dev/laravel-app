@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
   app:
@@ -14,9 +14,11 @@ services:
     ports:
       - ${DOCKER_HOST}:80
     volumes:
-      - $PWD:/var/www/html
+      - ./:/var/www/html
     depends_on:
-        - database
+      - database
+    networks:
+      - general
 
   database:
     container_name: laravel_app_db_demo
@@ -29,6 +31,12 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - general
+
+networks:
+  general:
+    name: general_net
 
 volumes:
   db_data:
