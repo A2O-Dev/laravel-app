@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
@@ -21,6 +22,7 @@ Route::get('routes', function () {
 
 Route::middleware('client')->group(function () {
     Route::apiResources([
-        'products' => ProductController::class
+        'products' => ProductController::class,
+        'users' => UserController::class
     ]);
 });
