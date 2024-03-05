@@ -34,10 +34,6 @@ spec:
             - name: persistent-volume
               mountPath: /data
               subPath: demos/laravel/app
-          lifecycle:
-            postStart:
-              exec:
-                command: [ "/bin/sh", "-c", "php artisan passport:keys" ]
       volumes:
         - name: persistent-volume
           persistentVolumeClaim:
