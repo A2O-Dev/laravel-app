@@ -13,6 +13,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: app
+                name: laravel-app-svc
                 port:
                   number: 80

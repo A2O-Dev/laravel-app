@@ -5,7 +5,7 @@ metadata:
   namespace: demos
 spec:
   selector:
-    app: database
+    app: laravel-database
   ports:
     - protocol: TCP
       port: 3306
