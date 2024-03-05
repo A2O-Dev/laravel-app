@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-deployment
+  name: laravel-app-deployment
   namespace: demos
   labels:
-    app: main
+    app: laravel-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: main
+      app: laravel-app
   template:
     metadata:
       labels:
-        app: main
+        app: laravel-app
     spec:
       automountServiceAccountToken: false
       containers:
-        - name: app
+        - name: laravel-app
           image: laravel_app_demo:1.0
           imagePullPolicy: IfNotPresent
           resources:
