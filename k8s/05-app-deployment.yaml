@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-deployment
-  namespace: demo
+  namespace: demos
   labels:
     app: main
 spec:
@@ -33,7 +33,7 @@ spec:
           volumeMounts:
             - name: persistent-volume
               mountPath: /data
-              subPath: app
+              subPath: demos/laravel/app
       volumes:
         - name: persistent-volume
           persistentVolumeClaim:
