@@ -9,7 +9,7 @@ services:
     ports:
       - ${APP_HOST:-80}:80
     volumes:
-        - app_data:/var/www/html/storage
+        - app_data:/data
     depends_on:
         - database
 
