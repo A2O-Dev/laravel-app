@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: shared-pvc
-  namespace: demo
+  namespace: demos
 spec:
   storageClassName: manual
   accessModes:

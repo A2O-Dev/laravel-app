@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: database-deployment
-  namespace: demo
+  namespace: demos
   labels:
     app: database
 spec:
@@ -36,7 +36,7 @@ spec:
           volumeMounts:
             - name: persistent-volume
               mountPath: /var/lib/mysql
-              subPath: mysql
+              subPath: demos/laravel/mysql
       volumes:
         - name: persistent-volume
           persistentVolumeClaim:
