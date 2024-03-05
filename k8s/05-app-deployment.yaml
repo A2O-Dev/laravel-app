@@ -18,7 +18,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: laravel-app
-          image: laravel_app_demo:1.0
+          image: laravel-app-demo:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
