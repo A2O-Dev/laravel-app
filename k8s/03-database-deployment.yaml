@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-deployment
+  namespace: demo
+  labels:
+    app: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: database
+          image: mariadb:10.8.3
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "0.5"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+              ephemeral-storage: 5Gi
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: laravel
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: persistent-volume
+              mountPath: /var/lib/mysql
+              subPath: mysql
+      volumes:
+        - name: persistent-volume
+          persistentVolumeClaim:
+            claimName: shared-pvc

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  namespace: demo
+  labels:
+    app: main
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main
+  template:
+    metadata:
+      labels:
+        app: main
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: app
+          image: laravel_app_demo:1.0
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "0.5"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+              ephemeral-storage: 5Gi
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: persistent-volume
+              mountPath: /data
+              subPath: app
+      volumes:
+        - name: persistent-volume
+          persistentVolumeClaim:
+            claimName: shared-pvc
