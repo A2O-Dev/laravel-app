@@ -1,7 +1,19 @@
 ARG PHP_VERSION=8.1.0
 ARG COMPOSER_VERSION=2.3.7
 
-FROM composer:${COMPOSER_VERSION} AS composer
+FROM alpine:3.19.1 AS envs-download
+
+RUN wget -q -t3 'https://packages.doppler.com/public/cli/rsa.8004D9FF50437357.key' -O /etc/apk/keys/cli@doppler-8004D9FF50437357.rsa.pub && \
+    echo 'https://packages.doppler.com/public/cli/alpine/any-version/main' | tee -a /etc/apk/repositories && \
+    apk add doppler \
+    && rm -rf /etc/apk/cache/*
+
+WORKDIR /app
+ARG DOPPLER_TOKEN
+RUN echo ${DOPPLER_TOKEN} | doppler configure set token --scope /
+RUN doppler secrets download --no-file --format env > .env
+
+FROM composer:${COMPOSER_VERSION} AS composer-dependencies
 
 WORKDIR /app
 COPY . /app
@@ -28,10 +40,10 @@ RUN apk add -U --no-cache \
 
 WORKDIR /var/www/html
 COPY . .
-COPY --from=composer /app/vendor /var/www/html/vendor
+COPY --from=composer-dependencies /app/vendor /var/www/html/vendor
 
 # Set environment variables
-RUN cp .env.example .env
+COPY --from=envs-download /app/.env /var/www/html/.env
 RUN php artisan key:generate
 
 # Setting supervisord
