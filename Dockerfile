@@ -31,6 +31,7 @@ COPY . .
 COPY --from=composer-dependencies /app/vendor /var/www/html/vendor
 
 # Set environment variables
+RUN touch .env
 RUN php artisan key:generate
 
 # Setting supervisord
