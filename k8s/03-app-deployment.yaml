@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel-app-demo
+  namespace: demos
+  labels:
+    app: laravel-app-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: laravel-app-demo
+  template:
+    metadata:
+      labels:
+        app: laravel-app-demo
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: laravel-app-demo
+          image: a2odev/laravel-app-demo
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: laravel-app-demo-secrets
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "0.5"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+              ephemeral-storage: 500Mi
+          ports:
+            - containerPort: 80
