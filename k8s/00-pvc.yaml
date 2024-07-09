@@ -9,7 +9,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
+      storage: 250Mi
   selector:
     matchLabels:
       type: laravel-app-demo

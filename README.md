@@ -4,6 +4,14 @@ Application to serve product catalog
 
 ## Installing
 
+### Docker
+
+-   Build docker image
+
+    ```shell
+    docker build -t laravel-app-demo --build-arg APP_URL="http://my-domain.com" --no-cache .
+    ```
+
 ### docker compose
 
 1. Up containers

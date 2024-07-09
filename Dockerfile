@@ -8,6 +8,8 @@ COPY . /app
 RUN composer install --prefer-dist --no-interaction --ignore-platform-reqs
 
 FROM php:${PHP_VERSION}-fpm-alpine
+ARG APP_URL=http://localhost
+ENV APP_URL=${APP_URL}
 
 RUN apk add -U --no-cache \
         libpng-dev \
