@@ -1,4 +1,4 @@
-name: Zerotier-connection
+name: Workflow to push to Nexus Server InOffice
 
 on:
   push:
@@ -13,18 +13,14 @@ jobs:
       - name: Zerotier Configuration
         uses: zerotier/github-action@v1
         with:
-         # network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
           network_id: ${{ vars.ZEROTIER_NETWORK_ID }}
           auth_token: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
-          #nexus_ip_server: ${{ vars.NEXUS_IP_SERVER }}
-          #nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-          #nexus_username: ${{ vars.NEXUS_USERNAME }}
 
       - name: Ping to Nexus Sever InOffice
         shell: bash
         run: |
-          count=5
-          while ! ping -c 5 ${{ vars.NEXUS_IP_SERVER }} ; do
+          count=3
+          while ! ping -c 3 ${{ vars.NEXUS_IP_SERVER }} ; do
             echo "waiting..." ;
             sleep 1 ;
             let count=count-1
@@ -66,9 +62,9 @@ jobs:
 
       - name: Tag Docker image with latest
         run: |
-          docker tag laravel-app-demo ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/gs1/staging/laravel-app-demo:latest
+          docker tag laravel-app-demo ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/laravel-app-demo/staging/laravel-app-demo:latest
 
       - name: Push Docker image to Nexus Repository
         run: |
-          docker push ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/gs1/staging/laravel-app-demo:latest
+          docker push ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/laravel-app-demo/staging/laravel-app-demo:latest
 
