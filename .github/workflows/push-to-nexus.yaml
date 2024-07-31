@@ -1,0 +1,62 @@
+name: Zerotier-connection
+
+on:
+  push:
+    branches:
+      - feature/RI-1692
+
+jobs:
+  Zerotier-Connection:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Zerotier Configuration
+        uses: zerotier/github-action@v1
+        with:
+         # network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
+          network_id: ${{ vars.ZEROTIER_NETWORK_ID }}
+          auth_token: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
+          nexus_ip_server: ${{ vars.NEXUS_IP_SERVER }}
+          nexus_password: ${{ secrets.NEXUS_PASSWORD }}
+          nexus_username: ${{ vars.NEXUS_USERNAME }}
+
+      - name: Ping Host
+        shell: bash
+        run: |
+          count=5
+          while ! ping -c 5 ${{ vars.NEXUS_IP_SERVER }} ; do
+            echo "waiting..." ;
+            sleep 1 ;
+            let count=count-1
+          done
+          echo "success ping connection to server inOffice ${{ vars.NEXUS_IP_SERVER }}"
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3    
+
+      - name: Install docker
+        uses: papodaca/install-docker-action@main
+
+      - name: Set up Docker daemon.json
+        run: |
+          echo '{"insecure-registries": ["172.29.81.0:8083"]}' | sudo tee /etc/docker/daemon.json
+
+      - name: Restart Docker
+        run: sudo systemctl restart docker
+
+      - name: Verify Docker Configuration
+        run: cat /etc/docker/daemon.json
+
+      - name: Build Docker image from this Repository 
+        shell: bash
+        run: |
+          docker build -t laravel-app-demo --build-arg APP_URL="http://my-domain.com" --no-cache .
+
+      - name: Docker login into Nexus Repository server
+        run: |
+          echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u ${{ secrets.NEXUS_USERNAME }} --password-stdin 172.29.81.0:8083
+
+      - name: Push Docker image to Nexus Repository
+        run: |
+          docker push 172.29.81.0:8083/nexus/docker/gs1/staging/laravel-app-demo:latest
+
