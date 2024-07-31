@@ -65,6 +65,10 @@ jobs:
         run: |
           echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u ${{ vars.NEXUS_USERNAME }} --password-stdin 172.29.81.0:8083
 
+      - name: Tag Docker image with latest
+        run: |
+          docker tag laravel-app-demo 172.29.81.0:8083/nexus/docker/gs1/staging/laravel-app-demo:latest
+
       - name: Push Docker image to Nexus Repository
         run: |
           docker push 172.29.81.0:8083/nexus/docker/gs1/staging/laravel-app-demo:latest
