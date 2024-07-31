@@ -6,7 +6,7 @@ on:
       - feature/RI-1692
 
 jobs:
-  Zerotier-Connection:
+  Push-Nexus-Server-InOffice:
     runs-on: ubuntu-latest
 
     steps:
