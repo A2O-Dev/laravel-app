@@ -16,11 +16,11 @@ jobs:
          # network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
           network_id: ${{ vars.ZEROTIER_NETWORK_ID }}
           auth_token: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
-          nexus_ip_server: ${{ vars.NEXUS_IP_SERVER }}
-          nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-          nexus_username: ${{ vars.NEXUS_USERNAME }}
+          #nexus_ip_server: ${{ vars.NEXUS_IP_SERVER }}
+          #nexus_password: ${{ secrets.NEXUS_PASSWORD }}
+          #nexus_username: ${{ vars.NEXUS_USERNAME }}
 
-      - name: Ping Host
+      - name: Ping to Nexus Sever InOffice
         shell: bash
         run: |
           count=5
@@ -34,9 +34,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3    
 
-      #- name: Install docker on runner machine
-      #  uses: papodaca/install-docker-action@main
-      - name: Set up Docker repository
+
+      - name: Install and Set up Docker on Runner 
         run: |
           sudo apt-get update
           sudo apt-get install -y ca-certificates curl gnupg lsb-release
@@ -48,7 +47,7 @@ jobs:
 
       - name: Set up Docker daemon.json
         run: |
-          echo '{"insecure-registries": ["172.29.81.0:8083"]}' | sudo tee /etc/docker/daemon.json
+          echo '{"insecure-registries": ["${{ vars.NEXUS_IP_SERVER }}"]}' | sudo tee /etc/docker/daemon.json
 
       - name: Restart Docker
         run: sudo systemctl restart docker
@@ -63,13 +62,13 @@ jobs:
 
       - name: Docker login into Nexus Repository server
         run: |
-          echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u ${{ vars.NEXUS_USERNAME }} --password-stdin 172.29.81.0:8083
+          echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u ${{ vars.NEXUS_USERNAME }} --password-stdin ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}
 
       - name: Tag Docker image with latest
         run: |
-          docker tag laravel-app-demo 172.29.81.0:8083/nexus/docker/gs1/staging/laravel-app-demo:latest
+          docker tag laravel-app-demo ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/gs1/staging/laravel-app-demo:latest
 
       - name: Push Docker image to Nexus Repository
         run: |
-          docker push 172.29.81.0:8083/nexus/docker/gs1/staging/laravel-app-demo:latest
+          docker push ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/gs1/staging/laravel-app-demo:latest
 
