@@ -47,7 +47,7 @@ jobs:
 
       - name: Set up Docker daemon.json
         run: |
-          echo '{"insecure-registries": ["${{ vars.NEXUS_IP_SERVER }}"]}' | sudo tee /etc/docker/daemon.json
+          echo '{"insecure-registries": ["${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}"]}' | sudo tee /etc/docker/daemon.json
 
       - name: Restart Docker
         run: sudo systemctl restart docker
