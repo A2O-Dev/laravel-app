@@ -54,7 +54,7 @@ jobs:
       - name: Build Docker image from this Repository 
         shell: bash
         run: |
-          docker build -t laravel-app-demo --build-arg APP_URL="http://my-domain.com" --no-cache .
+          docker build -t ${{vars.DOCKER_IMAGE}} --build-arg APP_URL="http://my-domain.com" --no-cache .
 
       - name: Docker login into Nexus Repository server
         run: |
@@ -62,9 +62,9 @@ jobs:
 
       - name: Tag Docker image with latest
         run: |
-          docker tag laravel-app-demo ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/laravel-app-demo/staging/laravel-app-demo:latest
+          docker tag ${{vars.DOCKER_IMAGE}} ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/${{vars.PROJECT_NAME}}/staging/laravel-app-demo:latest
 
       - name: Push Docker image to Nexus Repository
         run: |
-          docker push ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/laravel-app-demo/staging/laravel-app-demo:latest
+          docker push ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}/nexus/docker/${{vars.PROJECT_NAME}}/staging/laravel-app-demo:latest
 
