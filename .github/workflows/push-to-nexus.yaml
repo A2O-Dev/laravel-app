@@ -62,7 +62,7 @@ jobs:
 
       - name: Docker login into Nexus Repository server
         run: |
-          echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u ${{ vars.NEXUS_USERNAME }} --password-stdin ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}
+          echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u '${{ vars.NEXUS_USERNAME }}' --password-stdin ${{ vars.NEXUS_IP_SERVER }}:${{vars.NEXUS_PORT}}
 
       - name: Tag Docker image with latest
         run: |
