@@ -34,7 +34,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3    
 
-      - name: Install docker
+      - name: Install docker on runner machine
         uses: papodaca/install-docker-action@main
 
       - name: Set up Docker daemon.json
