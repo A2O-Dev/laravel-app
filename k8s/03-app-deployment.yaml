@@ -16,6 +16,8 @@ spec:
         app: laravel-app-demo
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-secret
       containers:
         - name: laravel-app-demo
           #image: a2odev/laravel-app-demo
