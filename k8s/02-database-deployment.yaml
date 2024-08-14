@@ -30,7 +30,8 @@ spec:
               ephemeral-storage: 100Mi
           envFrom:
             - secretRef:
-                name: laravel-app-demo-secrets
+                #name: laravel-app-demo-secrets
+              name: doppler-token-secret-app-laravel
           ports:
             - containerPort: 3306
           volumeMounts:
