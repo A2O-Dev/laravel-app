@@ -18,7 +18,8 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: laravel-app-demo
-          image: a2odev/laravel-app-demo
+          #image: a2odev/laravel-app-demo
+          image: 172.29.81.0:8083/nexus/docker/laravel-app-demo/staging/laravel-app-demo
           imagePullPolicy: Always
           envFrom:
             - secretRef:
