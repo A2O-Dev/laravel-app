@@ -23,7 +23,7 @@ spec:
           envFrom:
             - secretRef:
                 #name: laravel-app-demo-secrets
-              name: doppler-token-secret-app-laravel
+                name: doppler-token-secret-app-laravel
           resources:
             requests:
               memory: "150Mi"
