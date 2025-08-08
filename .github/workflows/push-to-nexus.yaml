@@ -27,20 +27,25 @@ jobs:
           done
           echo "success ping connection to server inOffice ${{ vars.NEXUS_IP_SERVER }}"
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          buildkitd-config-inline: |
-            [registry."${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}"]
-              http = true
-              insecure = true
+      - name: Add Headquarters Artifact Repository to insecure registry
+        run: |
+          echo '{ "insecure-registries": ["${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}"] }' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
+          docker info | grep -A3 'Insecure Registries'
 
       - name: Login to the Artifact repository
         uses: docker/login-action@v3
         with:
           registry: ${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}
           username: ${{ vars.NEXUS_USERNAME }}
-          password: ${{ secrets.NEXUS_PASSWORD }}            
+          password: ${{ secrets.NEXUS_PASSWORD }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-config-inline: |
+            [registry."${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}"]
+              http = true
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
