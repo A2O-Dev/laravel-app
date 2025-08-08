@@ -30,7 +30,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          config-inline: |
+          buildkitd-config-inline: |
             [registry."${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}"]
               http = true
               insecure = true
