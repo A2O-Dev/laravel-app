@@ -27,13 +27,6 @@ jobs:
           done
           echo "success ping connection to server inOffice ${{ vars.NEXUS_IP_SERVER }}"
 
-      - name: Login to the Artifact repository
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}
-          username: ${{ vars.NEXUS_USERNAME }}
-          password: ${{ secrets.NEXUS_PASSWORD }}
-
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -41,7 +34,13 @@ jobs:
             [registry."${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}"]
               http = true
               insecure = true
-            
+
+      - name: Login to the Artifact repository
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.NEXUS_IP_SERVER }}:${{ vars.NEXUS_PORT }}
+          username: ${{ vars.NEXUS_USERNAME }}
+          password: ${{ secrets.NEXUS_PASSWORD }}            
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
