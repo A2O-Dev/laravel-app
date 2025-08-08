@@ -19,10 +19,10 @@ jobs:
       - name: Ping to Nexus Sever InOffice
         shell: bash
         run: |
-          count=3
+          count=20
           while ! ping -c 3 ${{ vars.NEXUS_IP_SERVER }} ; do
             echo "waiting..." ;
-            sleep 1 ;
+            sleep 5 ;
             let count=count-1
           done
           echo "success ping connection to server inOffice ${{ vars.NEXUS_IP_SERVER }}"
