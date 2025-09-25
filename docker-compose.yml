@@ -8,10 +8,11 @@ services:
     restart: always
     ports:
       - ${APP_HOST:-8085}:80
+      - ${MCP_PORT:-5173}:5173
     volumes:
-        - app_data:/data
+      - app_data:/data
     depends_on:
-        - laravel-app-database
+      - laravel-app-database
 
   laravel-app-database:
     container_name: laravel-app-database

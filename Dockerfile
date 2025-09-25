@@ -28,6 +28,9 @@ RUN apk add -U --no-cache \
     && docker-php-source delete \
     && rm -rf /etc/apk/cache/*
 
+# Install node 22.19.0 lts
+# Install node mcp server dependencies
+
 WORKDIR /var/www/html
 COPY . .
 COPY --from=composer-dependencies /app/vendor /var/www/html/vendor
@@ -54,6 +57,8 @@ RUN php artisan passport:keys
 
 # Generate swagger
 RUN php artisan l5-swagger:generate
+
+EXPOSE 5173
 
 ## Start supervisord
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
