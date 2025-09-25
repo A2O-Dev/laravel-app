@@ -8,13 +8,21 @@ import mysql from "mysql2/promise";
 import express from "express";
 
 async function getServer() {
+    // const dbClient = await mysql.createConnection({
+    //     host: "localhost",
+    //     port: 3306,
+    //     user: "root",
+    //     password: "root",
+    //     database: "laravel",
+    // });
     const dbClient = await mysql.createConnection({
-        host: "localhost",
-        port: 3306,
-        user: "root",
-        password: "root",
-        database: "laravel",
-    });
+        host: process.env.DB_HOST || "db",
+        port: process.env.DB_PORT || 3306,
+        user: process.env.DB_USERNAME || "root",
+        password: process.env.DB_PASSWORD || "root",
+        database: process.env.DB_DATABASE || "laravel",
+      });
+      
 
     const server = new McpServer({ name: "db-mcp", version: "1.0.0" });
 
