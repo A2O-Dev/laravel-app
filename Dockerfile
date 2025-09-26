@@ -66,7 +66,7 @@ RUN mkdir -p /var/log/supervisor \
 COPY --chmod=0777 docker/app/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY --chmod=0777 docker/app/supervisor/schedule.sh /etc/supervisor/conf.d/schedule.sh
 
-# Setup nginx
+# Setting nginx
 COPY --chmod=0777 docker/app/nginx/default.conf /etc/nginx/http.d/default.conf
 
 # Generate keys
