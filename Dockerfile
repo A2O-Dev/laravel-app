@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.1.0
+ARG PHP_VERSION=8.1
 ARG COMPOSER_VERSION=2.3.7
 
 # Composer dependencies
@@ -10,7 +10,7 @@ RUN composer install --prefer-dist --no-interaction --ignore-platform-reqs
 
 # PHP build + Node
 FROM php:${PHP_VERSION}-fpm-alpine
-ARG MCP_PORT=5173
+ARG MCP_PORT=5137
 ENV MCP_PORT=${MCP_PORT}
 
 # Install PHP extensions
