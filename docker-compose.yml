@@ -10,9 +10,9 @@ services:
       - ${APP_HOST:-80}:80
       - ${MCP_PORT:-5137}:5137
     volumes:
-       - app_data:/data
+        - app_data:/data
     depends_on:
-       - database
+        - database
 
   database:
     container_name: database
