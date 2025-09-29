@@ -10,16 +10,16 @@ services:
       - ${APP_HOST:-80}:80
       - ${MCP_PORT:-5137}:5137
     volumes:
-      - app_data:/data
+       - app_data:/data
     depends_on:
-      - database
+       - database
 
   database:
     container_name: database
     image: mariadb:${MARIADB_VERSION:-10.8.3}
     restart: always
     ports:
-       - ${DB_HOST:-127.0.0.1:3306}:3306
+      - ${DB_HOST:-127.0.0.1:3306}:3306
     environment:
       - MYSQL_DATABASE=${DB_DATABASE:-laravel}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root}
