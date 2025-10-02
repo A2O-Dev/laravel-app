@@ -1,5 +1,6 @@
-ARG PHP_VERSION=8.1
+ARG PHP_VERSION=8.1.33
 ARG COMPOSER_VERSION=2.3.7
+ARG NODE_VERSION=22.19.0
 
 # Composer dependencies
 FROM composer:${COMPOSER_VERSION} AS composer-dependencies
@@ -7,6 +8,12 @@ FROM composer:${COMPOSER_VERSION} AS composer-dependencies
 WORKDIR /app
 COPY . /app
 RUN composer install --prefer-dist --no-interaction --ignore-platform-reqs
+
+# Node dependencies for MCP server
+FROM node:${NODE_VERSION}-alpine AS node-dependencies
+WORKDIR /app/mcp-server
+COPY mcp-server/package*.json ./
+RUN npm install --production
 
 # PHP build + Node
 FROM php:${PHP_VERSION}-fpm-alpine
@@ -32,23 +39,18 @@ RUN apk add -U --no-cache \
     && docker-php-source delete \
     && rm -rf /etc/apk/cache/*
 
-# Install Node.js v22.20.0
-RUN curl -fsSL https://unofficial-builds.nodejs.org/download/release/v22.19.0/node-v22.19.0-linux-x64-musl.tar.xz \
-    | tar -xJ -C /usr/local --strip-components=1 --no-same-owner \
- && ln -s /usr/local/bin/node /usr/bin/node \
- && ln -s /usr/local/bin/npm /usr/bin/npm \
- && ln -s /usr/local/bin/npx /usr/bin/npx
+# Copy Node from official image
+COPY --from=node-dependencies /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-dependencies /usr/local/lib/node_modules /usr/local/lib/node_modules
+
 # Copy Laravel + composer vendor
 WORKDIR /var/www/html
 COPY . .
 COPY --from=composer-dependencies /app/vendor /var/www/html/vendor
 
-# Copy MCP server
+# Copy MCP server + node_modules
 COPY mcp-server /var/www/html/mcp-server
-
-# Install MCP server dependencies
-WORKDIR /var/www/html/mcp-server
-RUN npm install --production
+COPY --from=node-dependencies /app/mcp-server/node_modules /var/www/html/mcp-server/node_modules
 
 # Set permissions
 WORKDIR /var/www/html
