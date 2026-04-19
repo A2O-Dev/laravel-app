@@ -22,18 +22,18 @@ ENV MCP_PORT=${MCP_PORT}
 
 # Install PHP extensions
 RUN apk add -U --no-cache \
-        libpng-dev \
-        libxml2-dev \
-        libzip-dev \
-        zip \
-        curl \
-        unzip \
-        nginx \
-        supervisor \
-        bash \
-        autoconf \
-        build-base \
-        linux-headers \
+    libpng-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    curl \
+    unzip \
+    nginx \
+    supervisor \
+    bash \
+    autoconf \
+    build-base \
+    linux-headers \
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install pdo_mysql \
@@ -90,5 +90,5 @@ RUN php artisan l5-swagger:generate
 # Expose MCP port
 EXPOSE ${MCP_PORT}
 
-## Start supervisord
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
