@@ -71,14 +71,11 @@ COPY --chmod=0777 docker/app/supervisor/schedule.sh /etc/supervisor/conf.d/sched
 # Setting nginx
 COPY --chmod=0777 docker/app/nginx/default.conf /etc/nginx/http.d/default.conf
 
-# Generate keys
-RUN php artisan passport:keys
-
-# Generate swagger
-RUN php artisan l5-swagger:generate
+# Entrypoint (genera keys, swagger y migraciones al iniciar, después del mount de volúmenes)
+COPY --chmod=0755 docker/app/entrypoint.sh /entrypoint.sh
 
 # Expose MCP port
 EXPOSE ${MCP_PORT}
 
-## Start supervisord
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

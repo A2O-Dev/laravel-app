@@ -10,6 +10,8 @@ services:
       - ${APP_HOST:-80}:80
       - ${MCP_PORT:-5137}:5137
     volumes:
+      - ./:/var/www/html          # código en vivo
+      - vendor_cache:/var/www/html/vendor        # vendor dentro del contenedor
       - app_data:/data
     depends_on:
       - database
@@ -29,3 +31,4 @@ services:
 volumes:
   db_data:
   app_data:
+  vendor_cache:
