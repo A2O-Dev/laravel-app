@@ -7,14 +7,16 @@ use App\Models\Order;
 use App\Models\User;
 use App\Repositories\OrderRepository;
 use Exception;
-use Laravel\Cashier\Cashier;
+use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;
+use Stripe\StripeClient;
 use Stripe\Webhook;
 
 class PaymentService extends BaseService {
 
     public function __construct(
-        private OrderRepository $orderRepository
+        private OrderRepository $orderRepository,
+        private StripeClient $stripeClient
     ) {
         parent::__construct();
     }
@@ -26,8 +28,7 @@ class PaymentService extends BaseService {
         try {
             $customer = $user->createOrGetStripeCustomer();
 
-            $stripe        = Cashier::stripe();
-            $paymentIntent = $stripe->paymentIntents->create([
+            $paymentIntent = $this->stripeClient->paymentIntents->create([
                 'amount'                    => $product->getPriceInCents(),
                 'currency'                  => $currency,
                 'customer'                  => $customer->id,
@@ -60,48 +61,28 @@ class PaymentService extends BaseService {
         return ['order' => $order, 'client_secret' => $clientSecret];
     }
 
-    public function confirmOrder(User $user, int $orderId): ?Order
-    {
+    public function confirmOrder(User $user, int $orderId): ?Order {
         $order = $this->orderRepository->findById($orderId);
 
         if (is_null($order)) {
             $this->errors->add('not-found', 'Order not found');
 
         } elseif ($order->user_id !== $user->id) {
-            $this->errors->add(
-                'unauthorized',
-                'Order does not belong to this user'
-            );
+            $this->errors->add('unauthorized', 'Order does not belong to this user');
 
-        } elseif (
-            !in_array(
-                $order->status,
-                [Order::PENDING, Order::PROCESSING]
-            )
-        ) {
-            $this->errors->add(
-                'invalid-status',
-                'Order cannot be confirmed in its current status'
-            );
+        } elseif (!in_array($order->status, [Order::PENDING, Order::PROCESSING])) {
+            $this->errors->add('invalid-status', 'Order cannot be confirmed in its current status');
 
         } else {
             try {
-                $stripe = Cashier::stripe();
-
-                $paymentIntent = $stripe->paymentIntents->retrieve(
+                $paymentIntent = $this->stripeClient->paymentIntents->retrieve(
                     $order->stripe_payment_intent_id
                 );
 
                 match ($paymentIntent->status) {
-                    'succeeded' => $this->orderRepository->markAsPaid($order),
-                    'processing' => $this->orderRepository->updateStatus(
-                        $order,
-                        Order::PROCESSING
-                    ),
-                    default => $this->orderRepository->updateStatus(
-                        $order,
-                        Order::FAILED
-                    ),
+                    'succeeded'  => $this->orderRepository->markAsPaid($order),
+                    'processing' => $this->orderRepository->updateStatus($order, Order::PROCESSING),
+                    default      => $this->orderRepository->updateStatus($order, Order::FAILED),
                 };
 
                 $order->refresh();
@@ -116,25 +97,25 @@ class PaymentService extends BaseService {
 
     public function handleWebhookEvent(string $payload, string $signature): void {
         try {
-            $event = Webhook::constructEvent(
-                $payload,
-                $signature,
-                config('cashier.webhook.secret')
-            );
+            $event = $this->verifyWebhookSignature($payload, $signature);
         } catch (SignatureVerificationException $e) {
             $this->errors->add('invalid-signature', 'Webhook signature verification failed');
             return;
         }
 
         try {
-            match ($event->type) {
-                'payment_intent.succeeded'       => $this->handlePaymentIntentSucceeded($event->data->object),
-                'payment_intent.payment_failed'  => $this->handlePaymentIntentFailed($event->data->object),
-                default                          => null,
-            };
+            if ($event->type === 'payment_intent.succeeded') {
+                $this->handlePaymentIntentSucceeded($event->data->object);
+            } elseif ($event->type === 'payment_intent.payment_failed') {
+                $this->handlePaymentIntentFailed($event->data->object);
+            }
         } catch (Exception $e) {
             $this->errors->add('webhook', $e->getMessage());
         }
+    }
+
+    protected function verifyWebhookSignature(string $payload, string $signature): Event {
+        return Webhook::constructEvent($payload, $signature, config('cashier.webhook.secret'));
     }
 
     private function handlePaymentIntentSucceeded(object $paymentIntent): void {
