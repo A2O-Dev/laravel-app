@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Contracts\Purchasable;
 use App\Helpers\ApiResponse;
-use App\Models\Order;
 use App\Models\Product;
+use App\Services\OrderService;
 use App\Services\PaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,11 +15,12 @@ use Illuminate\Validation\Rule;
 
 class OrderController extends Controller {
 
-    private array $productTypeMap = [
+    private const PRODUCT_TYPE_MAP = [
         'product' => Product::class,
     ];
 
     public function __construct(
+        private OrderService $orderService,
         private PaymentService $paymentService
     ) {}
 
@@ -41,17 +42,13 @@ class OrderController extends Controller {
         $pageSize    = (int) $request->get('page_size', 10);
         $currentPage = (int) $request->get('current_page', 0);
         $offset      = $currentPage * $pageSize;
+        $userId      = auth()->id();
 
-        $orders     = Order::where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->limit($pageSize)
-            ->offset($offset)
-            ->get();
-        $totalCount  = Order::where('user_id', auth()->id())->count();
-        $filterCount = count($orders);
+        $orders      = $this->orderService->getByUser($userId, $pageSize, $offset);
+        $totalCount  = $this->orderService->countByUser($userId);
 
         $apiRes->results     = $orders;
-        $apiRes->filterCount = $filterCount;
+        $apiRes->filterCount = count($orders);
         $apiRes->totalCount  = $totalCount;
 
         return response()->json($apiRes, 200);
@@ -82,24 +79,25 @@ class OrderController extends Controller {
     {
         $apiRes = new ApiResponse('Order');
         $statusCode = 201;
+        $result = null;
 
         if (!$this->validateRequest($request, $apiRes)) {
             $statusCode = 400;
 
         } else {
-            $product = $this->findProduct($request, $apiRes);
+            $product = $this->resolveProduct(
+                $request->product_type,
+                (int) $request->product_id
+            );
 
-            if (is_null($product)) {
+            if ($product === null) {
+                $apiRes->errors->add('not-found', 'Product not found');
                 $statusCode = 404;
 
             } else {
-                $result = $this->processPayment(
-                    $product,
-                    $request,
-                    $apiRes
-                );
+                $result = $this->processPayment($product, $request, $apiRes);
 
-                if (is_null($result)) {
+                if ($result === null) {
                     $statusCode = 400;
 
                 } else {
@@ -116,7 +114,7 @@ class OrderController extends Controller {
 
         return response()->json($apiRes, $statusCode);
     }
-   
+
     /**
      * @OA\Get(
      *     path="/api/orders/{id}",
@@ -133,16 +131,13 @@ class OrderController extends Controller {
     public function show(int $id): JsonResponse {
         $apiRes = new ApiResponse('Order');
 
-        $order = Order::find($id);
+        $order = $this->orderService->getByIdForUser($id, auth()->id());
 
-        if (is_null($order)) {
-            $apiRes->errors->add('not-found', 'Order not found');
-            return response()->json($apiRes, 404);
-        }
-
-        if ($order->user_id !== auth()->id()) {
-            $apiRes->errors->add('unauthorized', 'Access denied');
-            return response()->json($apiRes, 403);
+        if ($this->orderService->hasErrors()) {
+            $errorList = $this->orderService->getErrors();
+            $status = $errorList->has('not-found') ? 404 : 403;
+            $apiRes->errors->merge($errorList);
+            return response()->json($apiRes, $status);
         }
 
         $apiRes->results     = $order;
@@ -195,24 +190,11 @@ class OrderController extends Controller {
         return response()->json($apiRes, 200);
     }
 
-    private function resolveProduct(string $type, int $id): ?Purchasable {
-        if (!isset($this->productTypeMap[$type])) {
-            return null;
-        }
-
-        return $this->productTypeMap[$type]::find($id);
-    }
-
-    private function validateRequest(Request $request, ApiResponse $apiRes): bool
-    {
+    private function validateRequest(Request $request, ApiResponse $apiRes): bool {
         $validator = Validator::make($request->all(), [
-            'product_type' => [
-                'required',
-                'string',
-                Rule::in(array_keys($this->productTypeMap)),
-            ],
-            'product_id' => 'required|integer|min:1',
-            'currency' => 'nullable|string|size:3',
+            'product_type' => ['required', 'string', Rule::in(array_keys(self::PRODUCT_TYPE_MAP))],
+            'product_id'   => 'required|integer|min:1',
+            'currency'     => 'nullable|string|size:3',
         ]);
 
         if ($validator->fails()) {
@@ -223,43 +205,24 @@ class OrderController extends Controller {
         return true;
     }
 
-    private function findProduct(Request $request, ApiResponse $apiRes)
-    {
-        $product = $this->resolveProduct(
-            $request->product_type,
-            (int) $request->product_id
-        );
-
-        if (is_null($product)) {
-            $apiRes->errors->add('not-found', 'Product not found');
+    private function resolveProduct(string $type, int $id): ?Purchasable {
+        if (!isset(self::PRODUCT_TYPE_MAP[$type])) {
             return null;
         }
 
-        return $product;
+        return self::PRODUCT_TYPE_MAP[$type]::find($id);
     }
 
-    private function processPayment($product, Request $request, ApiResponse $apiRes): ?array
-    {
-        $currency = $request->get(
-            'currency',
-            config('cashier.currency', 'usd')
-        );
-
-        $result = $this->paymentService->createOrder(
-            auth()->user(),
-            $product,
-            $currency
-        );
+    private function processPayment(Purchasable $product, Request $request, ApiResponse $apiRes): ?array {
+        $currency = $request->get('currency', config('cashier.currency', 'usd'));
+        $result   = $this->paymentService->createOrder(auth()->user(), $product, $currency);
 
         if ($this->paymentService->hasErrors()) {
             $errorList = $this->paymentService->getErrors();
-
             $apiRes->errors->merge($errorList);
             Log::error($errorList);
-
             $apiRes->filterCount = 0;
-            $apiRes->totalCount = 0;
-
+            $apiRes->totalCount  = 0;
             return null;
         }
 
