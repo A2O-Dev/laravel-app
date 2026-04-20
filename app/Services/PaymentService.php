@@ -60,38 +60,55 @@ class PaymentService extends BaseService {
         return ['order' => $order, 'client_secret' => $clientSecret];
     }
 
-    public function confirmOrder(User $user, int $orderId): ?Order {
+    public function confirmOrder(User $user, int $orderId): ?Order
+    {
         $order = $this->orderRepository->findById($orderId);
 
         if (is_null($order)) {
             $this->errors->add('not-found', 'Order not found');
-            return null;
-        }
 
-        if ($order->user_id !== $user->id) {
-            $this->errors->add('unauthorized', 'Order does not belong to this user');
-            return $order;
-        }
+        } elseif ($order->user_id !== $user->id) {
+            $this->errors->add(
+                'unauthorized',
+                'Order does not belong to this user'
+            );
 
-        if (!in_array($order->status, [Order::PENDING, Order::PROCESSING])) {
-            $this->errors->add('invalid-status', 'Order cannot be confirmed in its current status');
-            return $order;
-        }
+        } elseif (
+            !in_array(
+                $order->status,
+                [Order::PENDING, Order::PROCESSING]
+            )
+        ) {
+            $this->errors->add(
+                'invalid-status',
+                'Order cannot be confirmed in its current status'
+            );
 
-        try {
-            $stripe        = Cashier::stripe();
-            $paymentIntent = $stripe->paymentIntents->retrieve($order->stripe_payment_intent_id);
+        } else {
+            try {
+                $stripe = Cashier::stripe();
 
-            match ($paymentIntent->status) {
-                'succeeded'                => $this->orderRepository->markAsPaid($order),
-                'processing'               => $this->orderRepository->updateStatus($order, Order::PROCESSING),
-                default                    => $this->orderRepository->updateStatus($order, Order::FAILED),
-            };
+                $paymentIntent = $stripe->paymentIntents->retrieve(
+                    $order->stripe_payment_intent_id
+                );
 
-            $order->refresh();
+                match ($paymentIntent->status) {
+                    'succeeded' => $this->orderRepository->markAsPaid($order),
+                    'processing' => $this->orderRepository->updateStatus(
+                        $order,
+                        Order::PROCESSING
+                    ),
+                    default => $this->orderRepository->updateStatus(
+                        $order,
+                        Order::FAILED
+                    ),
+                };
 
-        } catch (Exception $e) {
-            $this->errors->add('confirm-order', $e->getMessage());
+                $order->refresh();
+
+            } catch (Exception $e) {
+                $this->errors->add('confirm-order', $e->getMessage());
+            }
         }
 
         return $order;
