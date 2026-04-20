@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResetPasswordRequest;
@@ -14,12 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * @OA\Info(
- *      version="1.0.0",
- *      title="Auth Documentation"
- * )
- */
 class AuthController extends Controller
 {
     /*
@@ -155,14 +151,63 @@ class AuthController extends Controller
         return response()->json($apiRes, 423);
     }
 
-    public function changePassword(Request $request)
+    public function toggleEmailNotificationsActive(Request $request)
     {
         $user = \Auth::user();
         if (is_null($user)) {
             return response()->json(null, 401);
         }
 
-        $user = $this->userService->changePassword($user, $request->input());
+        $this->userService->toggleEmailNotificationsActive($user, $request->input());
+        return response()->json(null);
+    }
+    /**
+     * Change user password
+     * @param ChangePasswordRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     path="/api/auth/change-password",
+     *     tags={"auth"},
+     *     security={{"sanctum": {}}},
+     *     summary="Change authenticated user password",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"current_password", "password", "password_confirmation"},
+     *                 @OA\Property(property="current_password", type="string", format="password", example="oldpassword123"),
+     *                 @OA\Property(property="password", type="string", format="password", example="newpassword123"),
+     *                 @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword123")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password changed successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error or incorrect current password"
+     *     )
+     * )
+     */
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(null, 401);
+        }
+
+        $data = $request->validated();
+
+        $user = $this->userService->changePassword($user, $data);
+
         $apiRes = new ApiResponse('User');
 
         if ($this->userService->hasErrors()) {
@@ -174,18 +219,6 @@ class AuthController extends Controller
 
         return response()->json($apiRes);
     }
-
-    public function toggleEmailNotificationsActive(Request $request)
-    {
-        $user = \Auth::user();
-        if (is_null($user)) {
-            return response()->json(null, 401);
-        }
-
-        $this->userService->toggleEmailNotificationsActive($user, $request->input());
-        return response()->json(null);
-    }
-
     /**
      * Register a new user
      * 
@@ -229,43 +262,10 @@ class AuthController extends Controller
             return response()->json($apiRes, 422);
         }
         $userArray = $user->toArray();
-        unset($userArray['password']);
-        // $userArray['redirectTo'] = redirect()->intended($this->redirectPath())->getTargetUrl();
 
         $apiRes->results[] = $userArray;
 
         return response()->json($apiRes, 201);
-    }
-
-    public function removeUser(Request $request)
-    {
-        /**
-         * @var User $authUser
-         */
-        $authUser = \Auth::user();
-
-        $apiRes = new ApiResponse('User');
-
-        if (!$authUser->checkPassword($request->input('password'))) {
-            $apiRes->errors->add('password', 'The password is incorrect');
-            return response()->json($apiRes, 422);
-        }
-
-        $this->guard()->logout();
-        $request->session()->invalidate();
-
-        $this->userService->delete(
-            $authUser,
-            $this->castingDirectorService,
-            $this->talentService,
-            $this->subscriptionService,
-            $this->castingService,
-            $this->chatService,
-            $this->subscriberService,
-            $this->calendarService
-        );
-
-        return response()->json(null);
     }
 
     public function changeAuth(Request $request, $userId)
@@ -317,22 +317,16 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $user = $this->userService->login(
-            $request->validated()['email'],
-            $request->validated()['password']
-        );
+        $data = $request->validated();
 
+        $user = $this->userService->login($data);
         $apiRes = new ApiResponse('Auth');
         if ($this->userService->hasErrors()) {
             $apiRes->errors->merge($this->userService->getErrors());
             return response()->json($apiRes, 401);
         }
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
         $userArray = $user->toArray();
-        unset($userArray['password']);
         $userArray['token'] = $user->createToken('auth_token')->plainTextToken;
         $apiRes->results[] = $userArray;
 
@@ -361,17 +355,13 @@ class AuthController extends Controller
     public function logoutUser(Request $request)
     {
         $user = Auth::user();
-
         if ($user) {
-            // Revoke all tokens
-            $user->tokens()->delete();
+            $request->user()->currentAccessToken()->delete();
         }
 
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
     }
 
     /**
@@ -402,13 +392,11 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+        $data = $request->validated();
 
-        $success = $this->userService->requestPasswordReset($request->input('email'));
+        $this->userService->requestPasswordReset($data);
 
         $apiRes = new ApiResponse('Auth');
         if ($this->userService->hasErrors()) {
@@ -416,12 +404,9 @@ class AuthController extends Controller
             return response()->json($apiRes, 422);
         }
 
-        if (!$success) {
-            $apiRes->errors->add('email', 'Could not send password reset email');
-            return response()->json($apiRes, 422);
-        }
-
-        return response()->json(['message' => 'Password reset link sent to your email']);
+        return response()->json([
+            'message' => 'Password reset link sent to your email'
+        ]);
     }
 
     /**
@@ -457,16 +442,11 @@ class AuthController extends Controller
      */
     public function resetPassword(ResetPasswordRequest $request)
     {
-        $success = $this->userService->resetPassword($request->validated());
+        $this->userService->resetPassword($request->validated());
 
         $apiRes = new ApiResponse('Auth');
         if ($this->userService->hasErrors()) {
             $apiRes->errors->merge($this->userService->getErrors());
-            return response()->json($apiRes, 422);
-        }
-
-        if (!$success) {
-            $apiRes->errors->add('token', 'Invalid or expired token');
             return response()->json($apiRes, 422);
         }
 
@@ -502,7 +482,6 @@ class AuthController extends Controller
 
         $apiRes = new ApiResponse('User');
         $userArray = $user->toArray();
-        unset($userArray['password']);
         $apiRes->results[] = $userArray;
 
         return response()->json($apiRes);

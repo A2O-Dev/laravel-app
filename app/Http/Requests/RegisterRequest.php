@@ -5,16 +5,6 @@ namespace App\Http\Requests;
 class RegisterRequest extends BaseRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -27,7 +17,6 @@ class RegisterRequest extends BaseRequest
                 'required',
                 'email',
                 'unique:users,email',
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
             ],
             'password' => 'required|string|min:8|confirmed',
         ];
