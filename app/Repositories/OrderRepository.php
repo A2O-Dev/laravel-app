@@ -27,7 +27,7 @@ class OrderRepository {
 
     public function markAsPaid(Order $order): Order {
         $order->update([
-            'status'  => Order::STATUS_PAID,
+            'status'  => Order::PAID,
             'paid_at' => Carbon::now(),
         ]);
         return $order;

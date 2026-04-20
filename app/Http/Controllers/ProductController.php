@@ -21,29 +21,11 @@ use Illuminate\Support\Facades\Log;
  *      bearerFormat="JWT"
  * )
  *
- * @OA\Post(
- *     path="/oauth/token",
- *     tags={"auth"},
- *     summary="Get access token (client credentials)",
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"grant_type","client_id","client_secret"},
- *             @OA\Property(property="grant_type", type="string", example="client_credentials"),
- *             @OA\Property(property="client_id", type="integer", example=5),
- *             @OA\Property(property="client_secret", type="string", example="yOMLu30IiaAvVPO7ejSLe1lUY7jCdd00DDJxBEYy"),
- *             @OA\Property(property="scope", type="string", example="")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Token generado",
- *         @OA\JsonContent(
- *             @OA\Property(property="token_type", type="string", example="Bearer"),
- *             @OA\Property(property="expires_in", type="integer", example=1296000),
- *             @OA\Property(property="access_token", type="string")
- *         )
- *     )
+ * @OA\SecurityScheme(
+ *      securityScheme="sanctum",
+ *      type="http",
+ *      scheme="bearer",
+ *      bearerFormat="token"
  * )
  */
 class ProductController extends Controller {

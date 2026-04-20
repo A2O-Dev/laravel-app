@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\Purchasable;
 use App\Helpers\ApiResponse;
 use App\Models\Order;
+use App\Models\Product;
 use App\Services\PaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,13 +16,25 @@ use Illuminate\Validation\Rule;
 class OrderController extends Controller {
 
     private array $productTypeMap = [
-        'product' => \App\Models\Product::class,
+        'product' => Product::class,
     ];
 
     public function __construct(
         private PaymentService $paymentService
     ) {}
 
+    /**
+     * @OA\Get(
+     *     path="/api/orders",
+     *     tags={"orders"},
+     *     security={{"sanctum": {}}},
+     *     summary="List orders of the authenticated user",
+     *     @OA\Parameter(name="page_size", in="query", @OA\Schema(type="integer", example=10)),
+     *     @OA\Parameter(name="current_page", in="query", @OA\Schema(type="integer", example=0)),
+     *     @OA\Response(response=200, description="List of orders"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
+     */
     public function index(Request $request): JsonResponse {
         $apiRes = new ApiResponse('Order');
 
@@ -44,6 +57,27 @@ class OrderController extends Controller {
         return response()->json($apiRes, 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/orders",
+     *     tags={"orders"},
+     *     security={{"sanctum": {}}},
+     *     summary="Create a new order and payment intent",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"product_type","product_id"},
+     *             @OA\Property(property="product_type", type="string", example="product"),
+     *             @OA\Property(property="product_id", type="integer", example=1),
+     *             @OA\Property(property="currency", type="string", example="usd")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Order created with client_secret"),
+     *     @OA\Response(response=400, description="Validation error"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=404, description="Product not found")
+     * )
+     */
     public function store(Request $request): JsonResponse {
         $apiRes = new ApiResponse('Order');
 
@@ -87,6 +121,19 @@ class OrderController extends Controller {
         return response()->json($apiRes, 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/orders/{id}",
+     *     tags={"orders"},
+     *     security={{"sanctum": {}}},
+     *     summary="Get a single order",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Order data"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Access denied"),
+     *     @OA\Response(response=404, description="Order not found")
+     * )
+     */
     public function show(int $id): JsonResponse {
         $apiRes = new ApiResponse('Order');
 
@@ -109,6 +156,20 @@ class OrderController extends Controller {
         return response()->json($apiRes, 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/orders/{id}/confirm",
+     *     tags={"orders"},
+     *     security={{"sanctum": {}}},
+     *     summary="Confirm payment of an order",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Order confirmed"),
+     *     @OA\Response(response=400, description="Payment error"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Access denied"),
+     *     @OA\Response(response=404, description="Order not found")
+     * )
+     */
     public function confirm(int $id): JsonResponse {
         $apiRes = new ApiResponse('Order');
 
