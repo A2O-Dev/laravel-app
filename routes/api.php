@@ -14,22 +14,19 @@ use App\Http\Controllers\ProductController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-// Public authentication routes
-Route::group(['prefix' => 'auth'], function () {
-    Route::post('/register', [AuthController::class, 'store'])->name('register');
-    Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.forgot');
-    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
-});
+Route::prefix('auth')->group(function () {
 
-// Protected routes - require authentication
-Route::middleware(['auth:sanctum'])->group(function () {
-    // Auth routes
-    Route::group(['prefix' => 'auth'], function () {
-        Route::post('/logout', [AuthController::class, 'logoutUser'])->name('logout');
-        Route::get('/me', [AuthController::class, 'me'])->name('user.me');
-        Route::post('/change-password', [AuthController::class, 'changePassword'])->name('password.change');
+    Route::post('/register', [AuthController::class, 'store']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logoutUser']);
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/change-password', [AuthController::class, 'changePassword']);
     });
+
 });
 
 Route::middleware('client')->group(function () {

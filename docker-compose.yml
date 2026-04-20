@@ -10,6 +10,8 @@ services:
       - ${APP_HOST:-80}:80
       - ${MCP_PORT:-5137}:5137
     volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
       - app_data:/data
     depends_on:
       - database
@@ -25,6 +27,14 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root}
     volumes:
       - db_data:/var/lib/mysql
+
+  mailhog:
+    container_name: mailhog-laravel-app
+    image: mailhog/mailhog
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
 
 volumes:
   db_data:

@@ -11,19 +11,14 @@ use Illuminate\Support\Facades\Validator;
 class UserService extends BaseService
 {
     /**
-     * @var UserRepository
-     */
-    protected $userRepository;
-
-    /**
      * UserService constructor.
      *
      * @param UserRepository $userRepository
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(protected UserRepository $userRepository)
     {
         parent::__construct();
-        $this->userRepository = $userRepository;
+
     }
 
     /**
@@ -51,23 +46,16 @@ class UserService extends BaseService
     /**
      * Login user
      *
-     * @param string $email
-     * @param string $password
+     * @param array $data
      * @return User|null
      */
-    public function login(string $email, string $password): ?User
+    public function login(array $data): ?User
     {
         $this->clearErrors();
 
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors->add('email', 'Invalid email format');
-            return null;
-        }
+        $user = $this->userRepository->findByEmail($data['email']);
 
-        $user = $this->userRepository->findByEmail($email);
-
-        if (!$user || !Hash::check($password, $user->password)) {
+        if (!$user || !Hash::check($data['password'], $user->password)) {
             $this->errors->add('email', 'Invalid credentials');
             return null;
         }
@@ -118,64 +106,23 @@ class UserService extends BaseService
 
     /**
      * Change user password
-     *
-     * @param User $user
      * @param array $data
      * @return User|null
      */
-    public function changePassword(User $user, array $data): ?User
+    public function requestPasswordReset(array $data): void
     {
         $this->clearErrors();
 
-        // Validate input
-        $validator = Validator::make($data, [
-            'current_password' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            $this->errors = $validator->errors();
-            return null;
-        }
-
-        // Verify current password
-        if (!Hash::check($data['current_password'], $user->password)) {
-            $this->errors->add('current_password', 'Current password is incorrect');
-            return null;
-        }
-
         try {
-            return $this->userRepository->update($user, [
-                'password' => Hash::make($data['password']),
+            $status = Password::sendResetLink([
+                'email' => $data['email']
             ]);
+
+            if ($status !== Password::RESET_LINK_SENT) {
+                $this->errors->add('email', __($status));
+            }
         } catch (\Exception $e) {
-            $this->errors->add('general', 'Error changing password: ' . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Request password reset
-     *
-     * @param string $email
-     * @return bool
-     */
-    public function requestPasswordReset(string $email): bool
-    {
-        $this->clearErrors();
-
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors->add('email', 'Invalid email format');
-            return false;
-        }
-
-        try {
-            Password::sendResetLink(['email' => $email]);
-            return true;
-        } catch (\Exception $e) {
-            $this->errors->add('general', 'Error requesting password reset: ' . $e->getMessage());
-            return false;
+            $this->errors->add('general', 'Error requesting password reset');
         }
     }
 
@@ -185,63 +132,57 @@ class UserService extends BaseService
      * @param array $data
      * @return bool
      */
-    public function resetPassword(array $data): bool
+    public function resetPassword(array $data): void
     {
         $this->clearErrors();
 
-        // Validate input
-        $validator = Validator::make($data, [
-            'email' => 'required|email',
-            'token' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            $this->errors = $validator->errors();
-            return false;
-        }
-
         try {
-            $response = Password::reset($data, function ($user, $password) {
-                $this->userRepository->update($user, [
-                    'password' => Hash::make($password),
-                ]);
-            });
+            $status = Password::reset(
+                $data,
+                function ($user, $password) {
+                    $this->userRepository->update($user, [
+                        'password' => Hash::make($password),
+                    ]);
 
-            return $response === Password::PASSWORD_RESET;
+                    $user->tokens()->delete();
+                }
+            );
+
+            if ($status !== Password::PASSWORD_RESET) {
+                $this->errors->add('token', __($status));
+            }
+
         } catch (\Exception $e) {
-            $this->errors->add('general', 'Error resetting password: ' . $e->getMessage());
-            return false;
+            $this->errors->add('general', 'Error resetting password');
         }
     }
-
     /**
-     * Delete user
+     * Change user password
      *
      * @param User $user
-     * @return bool
+     * @param array $data
+     * @return User|null
      */
-    public function delete(User $user): bool
+    public function changePassword(User $user, array $data): ?User
     {
         $this->clearErrors();
 
-        try {
-            return $this->userRepository->delete($user);
-        } catch (\Exception $e) {
-            $this->errors->add('general', 'Error deleting user: ' . $e->getMessage());
-            return false;
+        if (!Hash::check($data['current_password'], $user->password)) {
+            $this->errors->add('current_password', 'Current password is incorrect');
+            return null;
         }
-    }
 
-    /**
-     * Validate email format
-     *
-     * @param string $email
-     * @return bool
-     */
-    public function isValidEmail(string $email): bool
-    {
-        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false
-            && preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $email);
+        try {
+            $updatedUser = $this->userRepository->update($user, [
+                'password' => Hash::make($data['password']),
+            ]);
+
+            $user->tokens()->delete();
+
+            return $updatedUser;
+        } catch (\Exception $e) {
+            $this->errors->add('general', 'Error changing password');
+            return null;
+        }
     }
 }
