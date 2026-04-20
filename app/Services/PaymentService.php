@@ -31,7 +31,10 @@ class PaymentService extends BaseService {
                 'amount'                    => $product->getPriceInCents(),
                 'currency'                  => $currency,
                 'customer'                  => $customer->id,
-                'automatic_payment_methods' => ['enabled' => true],
+                'automatic_payment_methods' => [
+                    'enabled'         => true,
+                    'allow_redirects' => 'never',
+                ],
                 'metadata'                  => array_merge($product->getMetadata(), [
                     'user_id' => $user->id,
                 ]),
@@ -44,7 +47,7 @@ class PaymentService extends BaseService {
                 'stripe_payment_intent_id' => $paymentIntent->id,
                 'amount'                   => $product->getPriceInCents(),
                 'currency'                 => $currency,
-                'status'                   => Order::STATUS_PENDING,
+                'status'                   => Order::PENDING,
                 'metadata'                 => $product->getMetadata(),
             ]);
 
@@ -70,7 +73,7 @@ class PaymentService extends BaseService {
             return $order;
         }
 
-        if (!in_array($order->status, [Order::STATUS_PENDING, Order::STATUS_PROCESSING])) {
+        if (!in_array($order->status, [Order::PENDING, Order::PROCESSING])) {
             $this->errors->add('invalid-status', 'Order cannot be confirmed in its current status');
             return $order;
         }
@@ -81,8 +84,8 @@ class PaymentService extends BaseService {
 
             match ($paymentIntent->status) {
                 'succeeded'                => $this->orderRepository->markAsPaid($order),
-                'processing'               => $this->orderRepository->updateStatus($order, Order::STATUS_PROCESSING),
-                default                    => $this->orderRepository->updateStatus($order, Order::STATUS_FAILED),
+                'processing'               => $this->orderRepository->updateStatus($order, Order::PROCESSING),
+                default                    => $this->orderRepository->updateStatus($order, Order::FAILED),
             };
 
             $order->refresh();
@@ -119,15 +122,15 @@ class PaymentService extends BaseService {
 
     private function handlePaymentIntentSucceeded(object $paymentIntent): void {
         $order = $this->orderRepository->findByPaymentIntentId($paymentIntent->id);
-        if ($order && $order->status !== Order::STATUS_PAID) {
+        if ($order && $order->status !== Order::PAID) {
             $this->orderRepository->markAsPaid($order);
         }
     }
 
     private function handlePaymentIntentFailed(object $paymentIntent): void {
         $order = $this->orderRepository->findByPaymentIntentId($paymentIntent->id);
-        if ($order && $order->status !== Order::STATUS_PAID) {
-            $this->orderRepository->updateStatus($order, Order::STATUS_FAILED);
+        if ($order && $order->status !== Order::PAID) {
+            $this->orderRepository->updateStatus($order, Order::FAILED);
         }
     }
 }
