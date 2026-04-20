@@ -11,12 +11,17 @@ services:
       - ${MCP_PORT:-5137}:5137
     volumes:
 <<<<<<< HEAD
+<<<<<<< HEAD
       - .:/var/www/html
       - /var/www/html/vendor
 =======
       - ./:/var/www/html          # código en vivo
       - vendor_cache:/var/www/html/vendor        # vendor dentro del contenedor
 >>>>>>> 660d5f8 (feature/RI-468: Mount with entrypoint sh)
+=======
+      - ./:/var/www/html
+      - vendor_cache:/var/www/html/vendor
+>>>>>>> a670cef (feature/RI-468: Fixes on mount)
       - app_data:/data
     depends_on:
       - database
