@@ -34,9 +34,10 @@ class Product extends Model implements Purchasable {
 
     public function getMetadata(): array {
         return [
-            'product_id'   => $this->id,
-            'product_name' => $this->name,
-            'product_code' => $this->code,
+            'product_id'        => $this->id,
+            'product_name'      => $this->name,
+            'product_code'      => $this->code,
+            'price_at_purchase' => $this->price,
         ];
     }
 }
