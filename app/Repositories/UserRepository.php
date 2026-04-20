@@ -52,36 +52,4 @@ class UserRepository
         $user->update($data);
         return $user->fresh();
     }
-
-    /**
-     * Delete user
-     *
-     * @param User $user
-     * @return bool
-     */
-    public function delete(User $user): bool
-    {
-        return $user->delete();
-    }
-
-    /**
-     * Get all users
-     *
-     * @return Collection
-     */
-    public function getAll(): Collection
-    {
-        return User::all();
-    }
-
-    /**
-     * Check if email exists
-     *
-     * @param string $email
-     * @return bool
-     */
-    public function emailExists(string $email): bool
-    {
-        return User::where('email', $email)->exists();
-    }
 }

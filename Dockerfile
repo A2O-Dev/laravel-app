@@ -72,7 +72,7 @@ COPY --chmod=0777 docker/app/supervisor/schedule.sh /etc/supervisor/conf.d/sched
 COPY --chmod=0777 docker/app/nginx/default.conf /etc/nginx/http.d/default.conf
 
 # Generate keys
-RUN php artisan passport:keys
+RUN php artisan passport:keys --force
 
 # Generate swagger
 RUN php artisan l5-swagger:generate
