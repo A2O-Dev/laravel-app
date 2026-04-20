@@ -12,11 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model {
     use HasFactory, SoftDeletes;
 
-    const STATUS_PENDING    = 'pending';
-    const STATUS_PROCESSING = 'processing';
-    const STATUS_PAID       = 'paid';
-    const STATUS_FAILED     = 'failed';
-    const STATUS_REFUNDED   = 'refunded';
+    const PENDING    = 'PENDING';
+    const PROCESSING = 'PROCESSING';
+    const PAID       = 'PAID';
+    const FAILED     = 'FAILED';
+    const REFUNDED   = 'REFUNDED';
 
     protected $fillable = [
         'user_id',
@@ -53,14 +53,14 @@ class Order extends Model {
     }
 
     public function scopePending($query) {
-        return $query->where('status', self::STATUS_PENDING);
+        return $query->where('status', self::PENDING);
     }
 
     public function scopePaid($query) {
-        return $query->where('status', self::STATUS_PAID);
+        return $query->where('status', self::PAID);
     }
 
     public function scopeFailed($query) {
-        return $query->where('status', self::STATUS_FAILED);
+        return $query->where('status', self::FAILED);
     }
 }

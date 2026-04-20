@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Log;
  *      bearerFormat="JWT"
  * )
  *
+<<<<<<< HEAD
  * @OA\Post(
  *     path="/oauth/token",
  *     tags={"auth"},
@@ -51,6 +52,13 @@ use Illuminate\Support\Facades\Log;
  *         )
  *     )
 >>>>>>> b9a1da7 (feature/RI-468: Add one time payment with Cashier and fixes)
+=======
+ * @OA\SecurityScheme(
+ *      securityScheme="sanctum",
+ *      type="http",
+ *      scheme="bearer",
+ *      bearerFormat="token"
+>>>>>>> 87450a9 (feature/RI-468: Create payment intent)
  * )
  */
 class ProductController extends Controller {
