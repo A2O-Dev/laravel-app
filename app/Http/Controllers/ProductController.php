@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
  *      version="1.0.0",
  *      title="Products Documentation"
  * )
- * 
+ *
  * @OA\SecurityScheme(
  *      securityScheme="sanctum",
  *      type="http",
