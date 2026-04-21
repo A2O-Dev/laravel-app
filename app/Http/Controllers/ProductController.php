@@ -13,13 +13,6 @@ use Illuminate\Support\Facades\Log;
  *      version="1.0.0",
  *      title="Products Documentation"
  * )
- *  *
- * @OA\SecurityScheme(
- *      securityScheme="passport",
- *      type="http",
- *      scheme="bearer",
- *      bearerFormat="JWT"
- * )
  *
  * @OA\SecurityScheme(
  *      securityScheme="sanctum",
