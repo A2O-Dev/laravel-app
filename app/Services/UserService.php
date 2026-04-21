@@ -183,4 +183,15 @@ class UserService extends BaseService
             return null;
         }
     }
+    public function delete(User $user): bool
+    {
+        $this->clearErrors();
+
+        try {
+            return $this->userRepository->delete($user);
+        } catch (\Exception $e) {
+            $this->errors->add('general', 'Error deleting user: ' . $e->getMessage());
+            return false;
+        }
+    }
 }

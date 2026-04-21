@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('subscriptions', [SubscriptionController::class, 'destroy']);
 });
 
-Route::middleware('client')->group(function () {
+Route::middleware(['auth:sanctum', 'subscribed'])->group(function () {
     Route::apiResources([
         'products' => ProductController::class,
     ]);

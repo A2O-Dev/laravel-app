@@ -13,14 +13,7 @@ use Illuminate\Support\Facades\Log;
  *      version="1.0.0",
  *      title="Products Documentation"
  * )
- *
- * @OA\SecurityScheme(
- *      securityScheme="passport",
- *      type="http",
- *      scheme="bearer",
- *      bearerFormat="JWT"
- * )
- *
+ * 
  * @OA\SecurityScheme(
  *      securityScheme="sanctum",
  *      type="http",
@@ -44,7 +37,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products",
      *     tags={"products"},
-     *     security={{"passport": {}}},
+     *     security={{"sanctum": {}}},
      *     summary="Show a list of products",
      *     @OA\Parameter(
      *         description="Size of page",
@@ -106,7 +99,7 @@ class ProductController extends Controller {
      * @OA\Post(
      *     path="/api/products",
      *     tags={"products"},
-     *     security={{"passport": {}}},
+     *     security={{"sanctum": {}}},
      *     summary="Create a new product",
      *     @OA\RequestBody(
      *          @OA\MediaType(
@@ -184,7 +177,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products/{product}",
      *     tags={"products"},
-     *     security={{"passport": {}}},
+     *     security={{"sanctum": {}}},
      *     summary="Show information of a product",
      *     @OA\Parameter(
      *         description="Product ID",
@@ -236,7 +229,7 @@ class ProductController extends Controller {
      * @OA\Put(
      *     path="/api/products/{product}",
      *     tags={"products"},
-     *     security={{"passport": {}}},
+     *     security={{"sanctum": {}}},
      *     summary="Update a product",
      *     @OA\Parameter(
      *         description="Product ID",
@@ -327,7 +320,7 @@ class ProductController extends Controller {
      * @OA\Delete(
      *     path="/api/products/{product}",
      *     tags={"products"},
-     *     security={{"passport": {}}},
+     *     security={{"sanctum": {}}},
      *     summary="Delete a product",
      *     @OA\Parameter(
      *         description="Product ID",

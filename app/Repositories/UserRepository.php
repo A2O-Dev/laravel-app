@@ -52,4 +52,14 @@ class UserRepository
         $user->update($data);
         return $user->fresh();
     }
+    /**
+     * Delete user
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function delete(User $user): bool
+    {
+        return $user->delete();
+    }
 }
