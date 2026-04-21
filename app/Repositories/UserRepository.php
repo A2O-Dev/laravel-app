@@ -8,28 +8,6 @@ use Illuminate\Support\Collection;
 class UserRepository
 {
     /**
-     * Get user by email
-     *
-     * @param string $email
-     * @return User|null
-     */
-    public function findByEmail(string $email): ?User
-    {
-        return User::where('email', $email)->first();
-    }
-
-    /**
-     * Get user by ID
-     *
-     * @param int $id
-     * @return User|null
-     */
-    public function findById(int $id): ?User
-    {
-        return User::find($id);
-    }
-
-    /**
      * Create a new user
      *
      * @param array $data
@@ -51,15 +29,5 @@ class UserRepository
     {
         $user->update($data);
         return $user->fresh();
-    }
-    /**
-     * Delete user
-     *
-     * @param User $user
-     * @return bool
-     */
-    public function delete(User $user): bool
-    {
-        return $user->delete();
     }
 }
