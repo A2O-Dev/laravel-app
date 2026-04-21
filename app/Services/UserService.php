@@ -30,13 +30,11 @@ class UserService extends BaseService
     public function register(array $data): ?User
     {
         try {
-            $user = $this->userRepository->create([
+            return $this->userRepository->create([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
             ]);
-
-            return $user;
         } catch (\Exception $e) {
             $this->errors->add('general', 'Error creating user: ' . $e->getMessage());
             return null;

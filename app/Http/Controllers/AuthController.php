@@ -161,6 +161,7 @@ class AuthController extends Controller
         $this->userService->toggleEmailNotificationsActive($user, $request->input());
         return response()->json(null);
     }
+
     /**
      * Change user password
      * @param ChangePasswordRequest $request
@@ -175,10 +176,29 @@ class AuthController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"current_password", "password", "password_confirmation"},
-     *                 @OA\Property(property="current_password", type="string", format="password", example="oldpassword123"),
-     *                 @OA\Property(property="password", type="string", format="password", example="newpassword123"),
-     *                 @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword123")
+     *                 required={
+     *                     "current_password",
+     *                     "password",
+     *                     "password_confirmation"
+     *                 },
+     *                 @OA\Property(
+     *                     property="current_password",
+     *                     type="string",
+     *                     format="password",
+     *                     example="oldpassword123"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string",
+     *                     format="password",
+     *                     example="newpassword123"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password_confirmation",
+     *                     type="string",
+     *                     format="password",
+     *                     example="newpassword123"
+     *                 )
      *             )
      *         )
      *     ),
@@ -221,10 +241,10 @@ class AuthController extends Controller
     }
     /**
      * Register a new user
-     * 
+     *
      * @param RegisterRequest $request
      * @return \Illuminate\Http\JsonResponse
-     * 
+     *
      * @OA\Post(
      *     path="/api/auth/register",
      *     tags={"auth"},
@@ -234,11 +254,35 @@ class AuthController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"name", "email", "password", "password_confirmation"},
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *                 @OA\Property(property="password", type="string", format="password", example="password123"),
-     *                 @OA\Property(property="password_confirmation", type="string", format="password", example="password123")
+     *                 required={
+     *                     "name",
+     *                     "email",
+     *                     "password",
+     *                     "password_confirmation"
+     *                 },
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     example="John Doe"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="string",
+     *                     format="email",
+     *                     example="john@example.com"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string",
+     *                     format="password",
+     *                     example="password123"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password_confirmation",
+     *                     type="string",
+     *                     format="password",
+     *                     example="password123"
+     *                 )
      *             )
      *         )
      *     ),
@@ -252,6 +296,7 @@ class AuthController extends Controller
      *     )
      * )
      */
+
     public function store(RegisterRequest $request)
     {
         $user = $this->userService->register($request->validated());

@@ -31,6 +31,9 @@ RUN apk add -U --no-cache \
         nginx \
         supervisor \
         bash \
+        $PHPIZE_DEPS \ 
+    && pecl install xdebug-3.2.2 \
+    && docker-php-ext-enable xdebug \
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install pdo_mysql \
@@ -39,6 +42,7 @@ RUN apk add -U --no-cache \
     && docker-php-source delete \
     && rm -rf /etc/apk/cache/*
 
+COPY docker/app/config/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 # Copy Node from official image
 COPY --from=node-dependencies /usr/local/bin/node /usr/local/bin/node
 COPY --from=node-dependencies /usr/local/lib/node_modules /usr/local/lib/node_modules
