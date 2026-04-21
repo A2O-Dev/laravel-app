@@ -141,6 +141,7 @@ return [
              */
             'exclude' => [
                 'Http/Controllers/Auth/LoginController.php',
+                'Http/Controllers/AuthController.php',
                 'Http/Controllers/TalentsController.php',
                 'Http/Controllers/ViewControllers/TalentsController.php',
                 'Models/',
