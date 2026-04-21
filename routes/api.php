@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthenticationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StripeWebhookController;
@@ -18,15 +18,15 @@ use App\Http\Controllers\SubscriptionController;
 */
 Route::prefix('auth')->group(function () {
 
-    Route::post('/register', [AuthController::class, 'store']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    Route::post('/register', [AuthenticationController::class, 'store']);
+    Route::post('/login', [AuthenticationController::class, 'login']);
+    Route::post('/forgot-password', [AuthenticationController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthenticationController::class, 'resetPassword']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [AuthController::class, 'logoutUser']);
-        Route::get('/me', [AuthController::class, 'me']);
-        Route::post('/change-password', [AuthController::class, 'changePassword']);
+        Route::post('/logout', [AuthenticationController::class, 'logoutUser']);
+        Route::get('/me', [AuthenticationController::class, 'me']);
+        Route::post('/change-password', [AuthenticationController::class, 'changePassword']);
     });
 
 });

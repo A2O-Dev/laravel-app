@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
 
 class UserService extends BaseService
 {
@@ -154,6 +153,7 @@ class UserService extends BaseService
             $this->errors->add('general', 'Error resetting password');
         }
     }
+
     /**
      * Change user password
      *
@@ -183,6 +183,11 @@ class UserService extends BaseService
             return null;
         }
     }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
     public function delete(User $user): bool
     {
         $this->clearErrors();
