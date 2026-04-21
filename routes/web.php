@@ -14,3 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::redirect('/', config('l5-swagger.documentations.default.routes.api', 'api/documentation'));
+Route::get('/reset-password/{token}', function () {
+    // view
+})->name('password.reset');

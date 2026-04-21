@@ -228,4 +228,66 @@ class UserServiceTest extends TestCase
         // Then
         $this->assertTrue($this->userService->hasErrors());
     }
+
+    public function test_it_handles_exception_when_register_fails()
+    {
+        // Given
+        $this->userRepository
+            ->shouldReceive('create')
+            ->once()
+            ->andThrow(new \Exception('DB error'));
+
+        $data = [
+            'name' => 'Josue',
+            'email' => 'test@test.com',
+            'password' => '123456'
+        ];
+
+        // When
+        $result = $this->userService->register($data);
+
+        // Then
+        $this->assertNull($result);
+        $this->assertTrue($this->userService->hasErrors());
+    }
+    public function test_it_handles_exception_when_update_fails()
+    {
+        // Given
+        $user = new User(['id' => 1]);
+
+        $this->userRepository
+            ->shouldReceive('update')
+            ->once()
+            ->andThrow(new \Exception('DB update error'));
+
+        // When
+        $result = $this->userService->update($user, [
+            'name' => 'Updated'
+        ]);
+
+        // Then
+        $this->assertNull($result);
+        $this->assertTrue($this->userService->hasErrors());
+    }
+    public function test_it_handles_exception_when_change_password_fails()
+    {
+        // Given
+        $user = Mockery::mock(User::class)->makePartial();
+        $user->password = Hash::make('old');
+
+        $this->userRepository
+            ->shouldReceive('update')
+            ->once()
+            ->andThrow(new \Exception('fail update'));
+
+        // When
+        $result = $this->userService->changePassword($user, [
+            'current_password' => 'old',
+            'password' => 'new123'
+        ]);
+
+        // Then
+        $this->assertNull($result);
+        $this->assertTrue($this->userService->hasErrors());
+    }
 }

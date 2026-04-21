@@ -29,7 +29,7 @@ Route::prefix('auth')->group(function () {
 
 });
 
-Route::middleware('client')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::apiResources([
         'products' => ProductController::class
     ]);
