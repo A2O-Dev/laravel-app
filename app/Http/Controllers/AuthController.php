@@ -161,7 +161,29 @@ class AuthController extends Controller
         $this->userService->toggleEmailNotificationsActive($user, $request->input());
         return response()->json(null);
     }
+    public function removeUser(Request $request)
+    {
+        /**
+         * @var User $authUser
+         */
+        $authUser = \Auth::user();
 
+        $apiRes = new ApiResponse('User');
+
+        if (!$authUser->checkPassword($request->input('password'))) {
+            $apiRes->errors->add('password', 'The password is incorrect');
+            return response()->json($apiRes, 422);
+        }
+
+        $this->guard()->logout();
+        $request->session()->invalidate();
+
+        $this->userService->delete(
+            $authUser,
+        );
+
+        return response()->json(null);
+    }
     /**
      * Change user password
      * @param ChangePasswordRequest $request
