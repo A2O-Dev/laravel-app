@@ -61,28 +61,6 @@ class UserService extends BaseService
     }
 
     /**
-     * Get user by ID
-     *
-     * @param int $id
-     * @return User|null
-     */
-    public function getById(int $id): ?User
-    {
-        return $this->userRepository->findById($id);
-    }
-
-    /**
-     * Get user by email
-     *
-     * @param string $email
-     * @return User|null
-     */
-    public function getByEmail(string $email): ?User
-    {
-        return $this->userRepository->findByEmail($email);
-    }
-
-    /**
      * Update user
      *
      * @param User $user
@@ -181,22 +159,6 @@ class UserService extends BaseService
         } catch (\Exception $e) {
             $this->errors->add('general', 'Error changing password');
             return null;
-        }
-    }
-
-    /**
-     * @param User $user
-     * @return bool
-     */
-    public function delete(User $user): bool
-    {
-        $this->clearErrors();
-
-        try {
-            return $this->userRepository->delete($user);
-        } catch (\Exception $e) {
-            $this->errors->add('general', 'Error deleting user: ' . $e->getMessage());
-            return false;
         }
     }
 }

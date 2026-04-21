@@ -119,24 +119,6 @@ class UserServiceTest extends TestCase
         $this->assertTrue($this->userService->hasErrors());
     }
 
-    public function test_it_gets_user_by_id()
-    {
-        // Given
-        $user = new User(['id' => 1]);
-
-        $this->userRepository
-            ->shouldReceive('findById')
-            ->once()
-            ->with(1)
-            ->andReturn($user);
-
-        // When
-        $result = $this->userService->getById(1);
-
-        // Then
-        $this->assertEquals($user, $result);
-    }
-
     public function test_it_updates_user_successfully()
     {
         // Given
