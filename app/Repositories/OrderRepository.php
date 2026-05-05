@@ -40,4 +40,8 @@ class OrderRepository {
             ->offset($offset)
             ->get();
     }
+
+    public function countByUserId(int $userId): int {
+        return Order::where('user_id', $userId)->count();
+    }
 }

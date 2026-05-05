@@ -1,11 +1,8 @@
 <?php
 
-<<<<<<< HEAD
 use App\Http\Controllers\AuthenticationController;
-=======
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StripeWebhookController;
->>>>>>> b9a1da7 (feature/RI-468: Add one time payment with Cashier and fixes)
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 

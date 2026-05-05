@@ -15,50 +15,10 @@ use Illuminate\Support\Facades\Log;
  * )
  *
  * @OA\SecurityScheme(
-<<<<<<< HEAD
  *      securityScheme="sanctum",
  *      type="http",
  *      scheme="bearer",
  *      bearerFormat="token"
-=======
- *      securityScheme="passport",
- *      type="http",
- *      scheme="bearer",
- *      bearerFormat="JWT"
- * )
- *
-<<<<<<< HEAD
- * @OA\Post(
- *     path="/oauth/token",
- *     tags={"auth"},
- *     summary="Get access token (client credentials)",
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"grant_type","client_id","client_secret"},
- *             @OA\Property(property="grant_type", type="string", example="client_credentials"),
- *             @OA\Property(property="client_id", type="integer", example=5),
- *             @OA\Property(property="client_secret", type="string", example="yOMLu30IiaAvVPO7ejSLe1lUY7jCdd00DDJxBEYy"),
- *             @OA\Property(property="scope", type="string", example="")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Token generado",
- *         @OA\JsonContent(
- *             @OA\Property(property="token_type", type="string", example="Bearer"),
- *             @OA\Property(property="expires_in", type="integer", example=1296000),
- *             @OA\Property(property="access_token", type="string")
- *         )
- *     )
->>>>>>> b9a1da7 (feature/RI-468: Add one time payment with Cashier and fixes)
-=======
- * @OA\SecurityScheme(
- *      securityScheme="sanctum",
- *      type="http",
- *      scheme="bearer",
- *      bearerFormat="token"
->>>>>>> 87450a9 (feature/RI-468: Create payment intent)
  * )
  */
 class ProductController extends Controller {
@@ -77,6 +37,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Show a list of products",
      *     @OA\Parameter(
@@ -139,6 +100,7 @@ class ProductController extends Controller {
      * @OA\Post(
      *     path="/api/products",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Create a new product",
      *     @OA\RequestBody(
@@ -217,6 +179,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Show information of a product",
      *     @OA\Parameter(
@@ -269,6 +232,7 @@ class ProductController extends Controller {
      * @OA\Put(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Update a product",
      *     @OA\Parameter(
@@ -360,6 +324,7 @@ class ProductController extends Controller {
      * @OA\Delete(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Delete a product",
      *     @OA\Parameter(
