@@ -81,22 +81,12 @@ COPY --chmod=0777 docker/app/supervisor/schedule.sh /etc/supervisor/conf.d/sched
 # Setting nginx
 COPY --chmod=0777 docker/app/nginx/default.conf /etc/nginx/http.d/default.conf
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d071117 (feature/RI-468: Fixes on mount)
 # Generate keys
+RUN php artisan passport:keys
 RUN php artisan passport:keys --force
 
 # Generate swagger
 RUN php artisan l5-swagger:generate
-<<<<<<< HEAD
-=======
-# Entrypoint (generate keys, swagger to start, after mount volumes)
-COPY --chmod=0755 docker/app/entrypoint.sh /entrypoint.sh
->>>>>>> a670cef (feature/RI-468: Fixes on mount)
-=======
->>>>>>> d071117 (feature/RI-468: Fixes on mount)
 
 # Expose MCP port
 EXPOSE ${MCP_PORT}
