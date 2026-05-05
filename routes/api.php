@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StripeWebhookController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\SubscriptionController;
@@ -17,7 +19,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::prefix('auth')->group(function () {
 
     Route::post('/register', [AuthenticationController::class, 'store']);
@@ -33,20 +34,19 @@ Route::prefix('auth')->group(function () {
 
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post  ('subscriptions', [SubscriptionController::class, 'store']);
-    Route::delete('subscriptions', [SubscriptionController::class, 'destroy']);
-});
-
 Route::middleware(['auth:sanctum', 'subscribed'])->group(function () {
     Route::apiResources([
         'products' => ProductController::class,
     ]);
+    Route::get    ('orders',             [OrderController::class, 'index']);
+    Route::post   ('orders',             [OrderController::class, 'store']);
+    Route::get    ('orders/{id}',        [OrderController::class, 'show']);
+    Route::post   ('orders/{id}/confirm',[OrderController::class, 'confirm']);
+});
 
-    Route::get    ('orders',              [OrderController::class, 'index']);
-    Route::post   ('orders',              [OrderController::class, 'store']);
-    Route::get    ('orders/{id}',         [OrderController::class, 'show']);
-    Route::post   ('orders/{id}/confirm', [OrderController::class, 'confirm']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post  ('subscriptions', [SubscriptionController::class, 'store']);
+    Route::delete('subscriptions', [SubscriptionController::class, 'destroy']);
 });
 
 Route::post('webhooks/stripe', [StripeWebhookController::class, 'handle'])

@@ -37,6 +37,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Show a list of products",
      *     @OA\Parameter(
@@ -99,6 +100,7 @@ class ProductController extends Controller {
      * @OA\Post(
      *     path="/api/products",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Create a new product",
      *     @OA\RequestBody(
@@ -177,6 +179,7 @@ class ProductController extends Controller {
      * @OA\Get(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Show information of a product",
      *     @OA\Parameter(
@@ -229,6 +232,7 @@ class ProductController extends Controller {
      * @OA\Put(
      *     path="/api/products/{product}",
      *     tags={"products"},
+     *     security={{"passport": {}}},
      *     security={{"sanctum": {}}},
      *     summary="Update a product",
      *     @OA\Parameter(
@@ -320,7 +324,7 @@ class ProductController extends Controller {
      * @OA\Delete(
      *     path="/api/products/{product}",
      *     tags={"products"},
-     *     security={{"sanctum": {}}},
+     *     security={{"passport": {}}},
      *     summary="Delete a product",
      *     @OA\Parameter(
      *         description="Product ID",
