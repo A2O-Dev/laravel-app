@@ -5,9 +5,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\SubscriptionController;
-use Illuminate\Support\Facades\Route;
+use Laravel\Cashier\Http\Controllers\WebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,5 +51,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('webhooks/stripe', [StripeWebhookController::class, 'handle'])
     ->withoutMiddleware(['throttle:api']);
 
-Route::post('webhooks/stripe/subscriptions', '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook')
+Route::post('webhooks/stripe/subscriptions', [WebhookController::class, 'handleWebhook'])
     ->withoutMiddleware(['throttle:api']);
