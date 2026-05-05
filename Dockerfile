@@ -22,25 +22,25 @@ ENV MCP_PORT=${MCP_PORT}
 
 # Install PHP extensions
 RUN apk add -U --no-cache \
-    libpng-dev \
-    libxml2-dev \
-    libzip-dev \
-    zip \
-    curl \
-    unzip \
-    nginx \
-    supervisor \
-    bash \
-    autoconf \
-    build-base \
-    linux-headers \
-    && docker-php-ext-configure gd \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install mysqli \
-    && docker-php-ext-install zip \
-    && docker-php-source delete \
-    && rm -rf /etc/apk/cache/*
+        libpng-dev \
+        libxml2-dev \
+        libzip-dev \
+        zip \
+        curl \
+        unzip \
+        nginx \
+        supervisor \
+        bash \
+        autoconf \
+        build-base \
+        linux-headers \
+        && docker-php-ext-configure gd \
+        && docker-php-ext-install -j$(nproc) gd \
+        && docker-php-ext-install pdo_mysql \
+        && docker-php-ext-install mysqli \
+        && docker-php-ext-install zip \
+        && docker-php-source delete \
+        && rm -rf /etc/apk/cache/*
 
 RUN pecl install xdebug-3.2.2 \
     && docker-php-ext-enable xdebug \
@@ -83,7 +83,6 @@ COPY --chmod=0777 docker/app/nginx/default.conf /etc/nginx/http.d/default.conf
 
 # Generate keys
 RUN php artisan passport:keys
-RUN php artisan passport:keys --force
 
 # Generate swagger
 RUN php artisan l5-swagger:generate
