@@ -325,6 +325,7 @@ class ProductController extends Controller {
      *     path="/api/products/{product}",
      *     tags={"products"},
      *     security={{"passport": {}}},
+     *     security={{"sanctum": {}}},
      *     summary="Delete a product",
      *     @OA\Parameter(
      *         description="Product ID",
