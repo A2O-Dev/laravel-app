@@ -2,27 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\PaymentService;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use App\Models\Order;
+use App\Repositories\OrderRepository;
+use Laravel\Cashier\Http\Controllers\WebhookController as CashierWebhookController;
+use Symfony\Component\HttpFoundation\Response;
 
-class StripeWebhookController extends Controller {
+class StripeWebhookController extends CashierWebhookController {
 
-    public function handle(Request $request, PaymentService $paymentService): Response {
-        $payload   = $request->getContent();
-        $signature = $request->header('Stripe-Signature', '');
+    public function __construct(private OrderRepository $orderRepository) {
+        parent::__construct();
+    }
 
-        $paymentService->handleWebhookEvent($payload, $signature);
+    protected function handlePaymentIntentSucceeded(array $payload): Response {
+        $order = $this->orderRepository->findByPaymentIntentId($payload['data']['object']['id']);
 
-        if ($paymentService->hasErrors()) {
-            Log::warning('Stripe webhook error', ['errors' => $paymentService->getErrors()]);
-
-            if ($paymentService->getErrors()->has('invalid-signature')) {
-                return response('Webhook signature verification failed', 400);
-            }
+        if ($order && $order->status !== Order::PAID) {
+            $this->orderRepository->markAsPaid($order);
         }
 
-        return response('Webhook received', 200);
+        return $this->successMethod();
+    }
+
+    protected function handlePaymentIntentPaymentFailed(array $payload): Response {
+        $order = $this->orderRepository->findByPaymentIntentId($payload['data']['object']['id']);
+
+        if ($order && $order->status !== Order::PAID) {
+            $this->orderRepository->updateStatus($order, Order::FAILED);
+        }
+
+        return $this->successMethod();
     }
 }
