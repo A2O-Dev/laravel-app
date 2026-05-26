@@ -10,22 +10,22 @@ use Laravel\Cashier\Subscription;
 class SubscriptionService extends BaseService {
 
     public function subscribe(User $user): ?string {
+        $clientSecret = null;
+
         if ($user->subscribed('default')) {
             $this->errors->add('already-subscribed', 'User already has an active subscription');
-            return null;
+        } else {
+            try {
+                $user->newSubscription('default', config('cashier.price_id'))
+                    ->create(null, [], ['payment_behavior' => 'default_incomplete']);
+            } catch (IncompletePayment $e) {
+                $clientSecret = $e->payment->clientSecret();
+            } catch (Exception $e) {
+                $this->errors->add('subscribe', $e->getMessage());
+            }
         }
 
-        try {
-            $user->newSubscription('default', config('cashier.price_id'))
-                ->create(null, [], ['payment_behavior' => 'default_incomplete']);
-        } catch (IncompletePayment $e) {
-            return $e->payment->clientSecret();
-        } catch (Exception $e) {
-            $this->errors->add('subscribe', $e->getMessage());
-            return null;
-        }
-
-        return null;
+        return $clientSecret;
     }
 
     public function confirm(User $user): ?Subscription {
@@ -47,18 +47,19 @@ class SubscriptionService extends BaseService {
     }
 
     public function cancel(User $user): bool {
+        $result = true;
         if (!$user->subscribed('default')) {
             $this->errors->add('not-subscribed', 'User does not have an active subscription');
-            return false;
+            $result = false;
         }
 
         try {
             $user->subscription('default')->cancel();
         } catch (Exception $e) {
             $this->errors->add('cancel', $e->getMessage());
-            return false;
+            $result = false;
         }
 
-        return true;
+        return $result;
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Services\SubscriptionService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller {
 
@@ -60,6 +60,7 @@ class SubscriptionController extends Controller {
 
         if ($this->subscriptionService->hasErrors()) {
             $errorList = $this->subscriptionService->getErrors();
+            Log::error($errorList);
             $apiRes->errors->merge($errorList);
             $status = $errorList->has('not-found') ? 404 : 400;
             return response()->json($apiRes, $status);

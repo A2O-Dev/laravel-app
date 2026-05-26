@@ -38,10 +38,10 @@ class SubscriptionServiceTest extends TestCase
     public function test_subscribe_returns_client_secret_when_incomplete_payment_thrown(): void
     {
         // given
-        $user                = Mockery::mock(User::class);
+        $user = Mockery::mock(User::class);
         $subscriptionBuilder = Mockery::mock();
-        $payment             = Mockery::mock(Payment::class);
-        $incompletePayment   = Mockery::mock(IncompletePayment::class)->makePartial();
+        $payment = Mockery::mock(Payment::class);
+        $incompletePayment = Mockery::mock(IncompletePayment::class)->makePartial();
         $incompletePayment->payment = $payment;
 
         $user->shouldReceive('subscribed')->with('default')->once()->andReturn(false);
@@ -70,7 +70,7 @@ class SubscriptionServiceTest extends TestCase
     public function test_subscribe_returns_null_and_adds_error_if_exception_thrown(): void
     {
         // given
-        $user                = Mockery::mock(User::class);
+        $user = Mockery::mock(User::class);
         $subscriptionBuilder = Mockery::mock();
 
         $user->shouldReceive('subscribed')->andReturn(false);
@@ -108,7 +108,7 @@ class SubscriptionServiceTest extends TestCase
     public function test_confirm_syncs_stripe_status_and_returns_subscription(): void
     {
         // given
-        $user         = Mockery::mock(User::class);
+        $user = Mockery::mock(User::class);
         $subscription = Mockery::mock(Subscription::class);
 
         $user->shouldReceive('subscription')->with('default')->once()->andReturn($subscription);
@@ -128,7 +128,7 @@ class SubscriptionServiceTest extends TestCase
     public function test_confirm_returns_null_and_adds_error_when_stripe_throws_exception(): void
     {
         // given
-        $user         = Mockery::mock(User::class);
+        $user = Mockery::mock(User::class);
         $subscription = Mockery::mock(Subscription::class);
 
         $user->shouldReceive('subscription')->with('default')->once()->andReturn($subscription);
@@ -165,7 +165,7 @@ class SubscriptionServiceTest extends TestCase
     public function test_cancel_cancels_subscription_successfully(): void
     {
         // given
-        $user         = Mockery::mock(User::class);
+        $user = Mockery::mock(User::class);
         $subscription = Mockery::mock();
 
         $user->shouldReceive('subscribed')->with('default')->once()->andReturn(true);
@@ -185,7 +185,7 @@ class SubscriptionServiceTest extends TestCase
     public function test_cancel_returns_false_and_adds_error_if_cancel_throws_exception(): void
     {
         // given
-        $user         = Mockery::mock(User::class);
+        $user = Mockery::mock(User::class);
         $subscription = Mockery::mock();
 
         $user->shouldReceive('subscribed')->andReturn(true);
