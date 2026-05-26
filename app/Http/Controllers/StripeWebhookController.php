@@ -23,7 +23,7 @@ class StripeWebhookController extends CashierWebhookController {
         return $this->successMethod();
     }
 
-        protected function handlePaymentIntentPaymentFailed(array $payload): Response {
+    protected function handlePaymentIntentPaymentFailed(array $payload): Response {
         $order = $this->orderRepository->findByPaymentIntentId($payload['data']['object']['id']);
 
         if ($order && $order->status !== Order::PAID) {
