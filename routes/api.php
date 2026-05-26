@@ -43,8 +43,9 @@ Route::middleware(['auth:sanctum', 'subscribed'])->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post  ('subscriptions', [SubscriptionController::class, 'store']);
-    Route::delete('subscriptions', [SubscriptionController::class, 'destroy']);
+    Route::post  ('subscriptions',         [SubscriptionController::class, 'store']);
+    Route::post  ('subscriptions/confirm', [SubscriptionController::class, 'confirm']);
+    Route::delete('subscriptions',         [SubscriptionController::class, 'destroy']);
 });
 
 Route::post('webhooks/stripe', [StripeWebhookController::class, 'handleWebhook'])
