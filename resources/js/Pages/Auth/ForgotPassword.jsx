@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from '@inertiajs/react';
 import { Box, Button, Stack, TextField } from '@mui/material';
-import AuthLayout, { AuthLink } from '../../layouts/AuthLayout';
+import AuthCard from '../../components/AuthCard';
 import FormAlert from '../../components/FormAlert';
 import { apiErrors, firstError } from '../../lib/auth';
 
@@ -28,10 +29,10 @@ export default function ForgotPassword() {
     };
 
     return (
-        <AuthLayout
+        <AuthCard
             title="Forgot Password"
             subtitle="Enter your email to receive reset instructions."
-            footer={<AuthLink href="/login">Back to login</AuthLink>}
+            footer={<Link href="/login" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Back to login</Link>}
         >
             <Box component="form" onSubmit={submit}>
                 <Stack spacing={2.5}>
@@ -56,6 +57,6 @@ export default function ForgotPassword() {
                     </Button>
                 </Stack>
             </Box>
-        </AuthLayout>
+        </AuthCard>
     );
 }
