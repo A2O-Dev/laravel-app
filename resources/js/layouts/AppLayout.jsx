@@ -1,9 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import { Link, router, usePage } from '@inertiajs/react';
 import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from '@mui/material';
 import { LockReset, Logout, SpaceDashboard } from '@mui/icons-material';
 import { clearSession } from '../lib/auth';
+
+AppLayout.propTypes = {
+    children: PropTypes.node.isRequired,
+};
 
 export default function AppLayout({ children }) {
     const { user } = usePage().props;
@@ -11,8 +16,6 @@ export default function AppLayout({ children }) {
     const logout = async () => {
         try {
             await axios.post('/api/auth/logout');
-        } catch (error) {
-            // The local token is still removed if the API token has already expired.
         } finally {
             clearSession();
             router.visit('/login');

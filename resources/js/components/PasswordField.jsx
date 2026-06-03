@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+
+PasswordField.propTypes = {
+    label: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    error: PropTypes.bool,
+    helperText: PropTypes.string,
+    name: PropTypes.string,
+    autoComplete: PropTypes.string,
+};
 
 export default function PasswordField({ label, value, onChange, error, helperText, name = 'password', autoComplete }) {
     const [visible, setVisible] = useState(false);

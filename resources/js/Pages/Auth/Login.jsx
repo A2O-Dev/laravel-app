@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Link, router } from '@inertiajs/react';
-import { Box, Button, Stack, TextField, Typography } from '@mui/material';
-import AuthCard from '../../components/AuthCard';
-import PasswordField from '../../components/PasswordField';
-import FormAlert from '../../components/FormAlert';
+import { Box, Button, Stack, Typography } from '@mui/material';
+import { AuthCard, EmailField, FormAlert, PasswordField } from '../../components';
 import { apiErrors, firstError, firstResult, persistSession } from '../../lib/auth';
 
 export default function Login() {
@@ -43,17 +41,11 @@ export default function Login() {
                 <Stack spacing={2.5}>
                     <FormAlert>{firstError(errors, '')}</FormAlert>
 
-                    <TextField
-                        fullWidth
-                        required
-                        name="email"
-                        type="email"
-                        label="Email"
+                    <EmailField
                         value={form.email}
                         onChange={update}
                         error={Boolean(errors.email)}
                         helperText={errors.email?.[0]}
-                        autoComplete="email"
                     />
 
                     <Box>
