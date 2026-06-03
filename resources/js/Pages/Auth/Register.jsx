@@ -5,11 +5,9 @@ import { Box, Button, Stack, TextField } from '@mui/material';
 import AuthLayout, { AuthLink } from '../../layouts/AuthLayout';
 import PasswordField from '../../components/PasswordField';
 import FormAlert from '../../components/FormAlert';
-import { apiErrors, firstError, firstResult } from '../../lib/auth';
-import { useAuth } from '../../contexts/AuthContext';
+import { apiErrors, firstError, firstResult, persistSession } from '../../lib/auth';
 
 export default function Register() {
-    const { setSession } = useAuth();
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -35,7 +33,7 @@ export default function Register() {
                 password: form.password,
             });
             const user = firstResult(loginResponse);
-            setSession(user, user.token);
+            persistSession(user, user.token);
             router.visit('/dashboard');
         } catch (error) {
             setErrors(apiErrors(error));

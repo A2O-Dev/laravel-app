@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from '@mui/material';
 import { LockReset, Logout, SpaceDashboard } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import { clearSession } from '../lib/auth';
 
 export default function AppLayout({ children }) {
-    const { user, loading, isAuthenticated, clearAuth } = useAuth();
+    const { user } = usePage().props;
 
     useEffect(() => {
-        if (!loading && !isAuthenticated) {
+        if (!user) {
             router.visit('/login');
         }
-    }, [isAuthenticated, loading]);
+    }, [user]);
 
     const logout = async () => {
         try {
@@ -20,12 +20,12 @@ export default function AppLayout({ children }) {
         } catch (error) {
             // The local token is still removed if the API token has already expired.
         } finally {
-            clearAuth();
+            clearSession();
             router.visit('/login');
         }
     };
 
-    if (loading || !isAuthenticated) {
+    if (!user) {
         return null;
     }
 

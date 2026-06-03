@@ -4,11 +4,11 @@ import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material
 import AppLayout from '../../layouts/AppLayout';
 import PasswordField from '../../components/PasswordField';
 import FormAlert from '../../components/FormAlert';
-import { apiErrors, firstError, firstResult } from '../../lib/auth';
-import { useAuth } from '../../contexts/AuthContext';
+import { usePage } from '@inertiajs/react';
+import { apiErrors, firstError, firstResult, persistSession } from '../../lib/auth';
 
 export default function ChangePassword() {
-    const { user, setSession } = useAuth();
+    const { user } = usePage().props;
     const [form, setForm] = useState({
         current_password: '',
         password: '',
@@ -35,7 +35,7 @@ export default function ChangePassword() {
                 password: form.password,
             });
             const refreshedUser = firstResult(loginResponse);
-            setSession(refreshedUser, refreshedUser.token);
+            persistSession(refreshedUser, refreshedUser.token);
             setSuccess('Password changed successfully.');
             setForm({
                 current_password: '',
