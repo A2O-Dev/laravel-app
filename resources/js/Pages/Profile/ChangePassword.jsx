@@ -1,26 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { usePage } from '@inertiajs/react';
 import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material';
 import AppLayout from '../../layouts/AppLayout';
-import PasswordField from '../../components/PasswordField';
-import FormAlert from '../../components/FormAlert';
-import { usePage } from '@inertiajs/react';
+import { FormAlert, PasswordConfirmFields, PasswordField } from '../../components';
+import useForm from '../../hooks/useForm';
 import { apiErrors, firstError, firstResult, persistSession } from '../../lib/auth';
+
+const INITIAL_FORM = { current_password: '', password: '', password_confirmation: '' };
 
 export default function ChangePassword() {
     const { user } = usePage().props;
-    const [form, setForm] = useState({
-        current_password: '',
-        password: '',
-        password_confirmation: '',
-    });
-    const [errors, setErrors] = useState({});
+    const { form, errors, setErrors, submitting, setSubmitting, update, reset } = useForm(INITIAL_FORM);
     const [success, setSuccess] = useState('');
-    const [submitting, setSubmitting] = useState(false);
-
-    const update = (event) => {
-        setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
-    };
 
     const submit = async (event) => {
         event.preventDefault();
@@ -37,11 +29,7 @@ export default function ChangePassword() {
             const refreshedUser = firstResult(loginResponse);
             persistSession(refreshedUser, refreshedUser.token);
             setSuccess('Password changed successfully.');
-            setForm({
-                current_password: '',
-                password: '',
-                password_confirmation: '',
-            });
+            reset();
         } catch (error) {
             setErrors(apiErrors(error));
         } finally {
@@ -75,24 +63,8 @@ export default function ChangePassword() {
                                     helperText={errors.current_password?.[0]}
                                     autoComplete="current-password"
                                 />
-                                <PasswordField
-                                    label="New Password"
-                                    name="password"
-                                    value={form.password}
-                                    onChange={update}
-                                    error={Boolean(errors.password)}
-                                    helperText={errors.password?.[0]}
-                                    autoComplete="new-password"
-                                />
-                                <PasswordField
-                                    label="Confirm New Password"
-                                    name="password_confirmation"
-                                    value={form.password_confirmation}
-                                    onChange={update}
-                                    error={Boolean(errors.password_confirmation)}
-                                    helperText={errors.password_confirmation?.[0]}
-                                    autoComplete="new-password"
-                                />
+
+                                <PasswordConfirmFields form={form} errors={errors} onChange={update} />
 
                                 <Button type="submit" size="large" variant="contained" disabled={submitting}>
                                     {submitting ? 'Saving...' : 'Change password'}

@@ -1,5 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Box, Paper, Stack, Typography } from '@mui/material';
+
+AuthCard.propTypes = {
+    title: PropTypes.string.isRequired,
+    subtitle: PropTypes.string,
+    footer: PropTypes.node,
+    children: PropTypes.node.isRequired,
+};
 
 export default function AuthCard({ title, subtitle, footer, children }) {
     return (

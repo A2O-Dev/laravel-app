@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { Link } from '@inertiajs/react';
-import { Box, Button, Stack, TextField } from '@mui/material';
-import AuthCard from '../../components/AuthCard';
-import FormAlert from '../../components/FormAlert';
+import { Box, Button, Stack } from '@mui/material';
+import { AuthCard, EmailField, FormAlert } from '../../components';
 import { apiErrors, firstError } from '../../lib/auth';
 
 export default function ForgotPassword() {
@@ -39,17 +38,11 @@ export default function ForgotPassword() {
                     <FormAlert severity="success">{success}</FormAlert>
                     <FormAlert>{firstError(errors, '')}</FormAlert>
 
-                    <TextField
-                        fullWidth
-                        required
-                        name="email"
-                        type="email"
-                        label="Email"
+                    <EmailField
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                         error={Boolean(errors.email)}
                         helperText={errors.email?.[0]}
-                        autoComplete="email"
                     />
 
                     <Button type="submit" size="large" variant="contained" disabled={submitting}>

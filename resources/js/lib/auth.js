@@ -25,7 +25,7 @@ export function getStoredUser() {
 
     try {
         return JSON.parse(user);
-    } catch (error) {
+    } catch {
         window.localStorage.removeItem(USER_KEY);
         return null;
     }

@@ -1,25 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { Link, router } from '@inertiajs/react';
 import { Box, Button, Stack, TextField } from '@mui/material';
-import AuthCard from '../../components/AuthCard';
-import PasswordField from '../../components/PasswordField';
-import FormAlert from '../../components/FormAlert';
+import { AuthCard, EmailField, FormAlert, PasswordConfirmFields } from '../../components';
+import useForm from '../../hooks/useForm';
 import { apiErrors, firstError, firstResult, persistSession } from '../../lib/auth';
 
 export default function Register() {
-    const [form, setForm] = useState({
+    const { form, errors, setErrors, submitting, setSubmitting, update } = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
     });
-    const [errors, setErrors] = useState({});
-    const [submitting, setSubmitting] = useState(false);
-
-    const update = (event) => {
-        setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
-    };
 
     const submit = async (event) => {
         event.preventDefault();
@@ -49,56 +42,34 @@ export default function Register() {
             footer={<>Already have an account? <Link href="/login" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Login</Link></>}
         >
             <Box component="form" onSubmit={submit}>
-                        <Stack spacing={2.5}>
-                            <FormAlert>{firstError(errors, '')}</FormAlert>
+                <Stack spacing={2.5}>
+                    <FormAlert>{firstError(errors, '')}</FormAlert>
 
-                            <TextField
-                                fullWidth
-                                required
-                                name="name"
-                                label="Name"
-                                value={form.name}
-                                onChange={update}
-                                error={Boolean(errors.name)}
-                                helperText={errors.name?.[0]}
-                                autoComplete="name"
-                            />
-                            <TextField
-                                fullWidth
-                                required
-                                name="email"
-                                type="email"
-                                label="Email"
-                                value={form.email}
-                                onChange={update}
-                                error={Boolean(errors.email)}
-                                helperText={errors.email?.[0]}
-                                autoComplete="email"
-                            />
-                            <PasswordField
-                                label="Password"
-                                name="password"
-                                value={form.password}
-                                onChange={update}
-                                error={Boolean(errors.password)}
-                                helperText={errors.password?.[0]}
-                                autoComplete="new-password"
-                            />
-                            <PasswordField
-                                label="Confirm Password"
-                                name="password_confirmation"
-                                value={form.password_confirmation}
-                                onChange={update}
-                                error={Boolean(errors.password_confirmation)}
-                                helperText={errors.password_confirmation?.[0]}
-                                autoComplete="new-password"
-                            />
+                    <TextField
+                        fullWidth
+                        required
+                        name="name"
+                        label="Name"
+                        value={form.name}
+                        onChange={update}
+                        error={Boolean(errors.name)}
+                        helperText={errors.name?.[0]}
+                        autoComplete="name"
+                    />
+                    <EmailField
+                        value={form.email}
+                        onChange={update}
+                        error={Boolean(errors.email)}
+                        helperText={errors.email?.[0]}
+                    />
 
-                            <Button type="submit" size="large" variant="contained" disabled={submitting}>
-                                {submitting ? 'Creating account...' : 'Register'}
-                            </Button>
-                        </Stack>
-                    </Box>
+                    <PasswordConfirmFields form={form} errors={errors} onChange={update} />
+
+                    <Button type="submit" size="large" variant="contained" disabled={submitting}>
+                        {submitting ? 'Creating account...' : 'Register'}
+                    </Button>
+                </Stack>
+            </Box>
         </AuthCard>
     );
 }
