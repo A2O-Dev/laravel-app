@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { Link, router } from '@inertiajs/react';
-import { Alert, Box, Button, Stack, TextField, Typography } from '@mui/material';
-import AuthLayout, { AuthLink } from '../../layouts/AuthLayout';
+import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import AuthCard from '../../components/AuthCard';
 import PasswordField from '../../components/PasswordField';
 import FormAlert from '../../components/FormAlert';
 import { apiErrors, firstError, firstResult, persistSession } from '../../lib/auth';
@@ -34,10 +34,10 @@ export default function Login() {
     };
 
     return (
-        <AuthLayout
+        <AuthCard
             title="Login"
             subtitle="Access your Laravel Demo dashboard."
-            footer={<>No account yet? <AuthLink href="/register">Create one 1</AuthLink></>}
+            footer={<>No account yet? <Link href="/register" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Create one</Link></>}
         >
             <Box component="form" onSubmit={submit}>
                 <Stack spacing={2.5}>
@@ -78,6 +78,6 @@ export default function Login() {
                     </Button>
                 </Stack>
             </Box>
-        </AuthLayout>
+        </AuthCard>
     );
 }

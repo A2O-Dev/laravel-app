@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { Link, router, usePage } from '@inertiajs/react';
 import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from '@mui/material';
@@ -7,12 +7,6 @@ import { clearSession } from '../lib/auth';
 
 export default function AppLayout({ children }) {
     const { user } = usePage().props;
-
-    useEffect(() => {
-        if (!user) {
-            router.visit('/login');
-        }
-    }, [user]);
 
     const logout = async () => {
         try {
@@ -24,10 +18,6 @@ export default function AppLayout({ children }) {
             router.visit('/login');
         }
     };
-
-    if (!user) {
-        return null;
-    }
 
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>

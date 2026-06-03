@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { Box, Button, Stack, TextField } from '@mui/material';
-import AuthLayout, { AuthLink } from '../../layouts/AuthLayout';
+import AuthCard from '../../components/AuthCard';
 import PasswordField from '../../components/PasswordField';
 import FormAlert from '../../components/FormAlert';
 import { apiErrors, firstError } from '../../lib/auth';
@@ -38,10 +38,10 @@ export default function ResetPassword() {
     };
 
     return (
-        <AuthLayout
+        <AuthCard
             title="Reset Password"
             subtitle="Choose a new password for your account."
-            footer={<AuthLink href="/login">Back to login</AuthLink>}
+            footer={<Link href="/login" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>Back to login</Link>}
         >
             <Box component="form" onSubmit={submit}>
                 <Stack spacing={2.5}>
@@ -83,6 +83,6 @@ export default function ResetPassword() {
                     </Button>
                 </Stack>
             </Box>
-        </AuthLayout>
+        </AuthCard>
     );
 }
