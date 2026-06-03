@@ -65,5 +65,7 @@ class Kernel extends HttpKernel {
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'client' => CheckClientCredentials::class,
         'subscribed' => \App\Http\Middleware\EnsureUserIsSubscribed::class,
+        'sanctum.cookie' => \App\Http\Middleware\UseSanctumTokenCookie::class,
+        'guest.sanctum' => \App\Http\Middleware\RedirectIfSanctumAuthenticated::class,
     ];
 }

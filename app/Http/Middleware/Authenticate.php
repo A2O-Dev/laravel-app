@@ -24,10 +24,14 @@ class Authenticate extends Middleware {
         try {
             $this->authenticate($request, $guards);
         } catch (AuthenticationException $e) {
+            if (!$request->expectsJson()) {
+                return redirect()->guest(route('login'));
+            }
+
             $apiRes = new ApiResponse('Auth');
             $apiRes->results = Auth::check();
             $apiRes->errors->add('unauthenticated', 'You need authentication');
-            return response()->json($apiRes);
+            return response()->json($apiRes, 401);
         }
         return $next($request);
     }
