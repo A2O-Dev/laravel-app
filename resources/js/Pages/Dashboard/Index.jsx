@@ -1,10 +1,10 @@
 import React from 'react';
+import { usePage } from '@inertiajs/react';
 import { Card, CardContent, Stack, Typography } from '@mui/material';
 import AppLayout from '../../layouts/AppLayout';
-import { useAuth } from '../../contexts/AuthContext';
 
 export default function Dashboard() {
-    const { user } = useAuth();
+    const { user } = usePage().props;
 
     return (
         <AppLayout>

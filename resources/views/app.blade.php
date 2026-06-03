@@ -14,6 +14,7 @@
         <script src="{{ mix('/js/app.js') }}" defer></script>
     </head>
     <body>
-        <div id="app" data-page='@json($page)'></div>
+        <div id="app"></div>
+        <script type="application/json" data-page="app">@json($page)</script>
     </body>
 </html>

@@ -4,7 +4,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { AuthProvider } from './contexts/AuthContext';
 import theme from './theme';
 
 const pages = {
@@ -31,9 +30,7 @@ createInertiaApp({
             <React.StrictMode>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <AuthProvider>
-                        <App {...props} />
-                    </AuthProvider>
+                    <App {...props} />
                 </ThemeProvider>
             </React.StrictMode>,
         );

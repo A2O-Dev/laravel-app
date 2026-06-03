@@ -9,8 +9,11 @@ class UseSanctumTokenCookie
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->bearerToken() && $request->hasCookie('auth_token')) {
-            $request->headers->set('Authorization', 'Bearer ' . $request->cookie('auth_token'));
+        if (!$request->bearerToken()) {
+            $token = $_COOKIE['auth_token'] ?? null;
+            if ($token) {
+                $request->headers->set('Authorization', 'Bearer ' . $token);
+            }
         }
 
         return $next($request);

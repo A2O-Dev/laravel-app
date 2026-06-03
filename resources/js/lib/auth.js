@@ -5,7 +5,7 @@ const USER_KEY = 'auth_user';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 
 function writeTokenCookie(token) {
-    document.cookie = `${TOKEN_KEY}=${encodeURIComponent(token)}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+    document.cookie = `${TOKEN_KEY}=${token}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
 }
 
 function clearTokenCookie() {

@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { Box, Paper, Stack, Typography } from '@mui/material';
-import { useAuth } from '../contexts/AuthContext';
 
 export default function AuthLayout({ title, subtitle, footer, children }) {
-    const { isAuthenticated, loading } = useAuth();
+    const { user } = usePage().props;
 
     useEffect(() => {
-        if (!loading && isAuthenticated) {
+        if (user) {
             router.visit('/dashboard');
         }
-    }, [isAuthenticated, loading]);
+    }, [user]);
 
     return (
         <Box

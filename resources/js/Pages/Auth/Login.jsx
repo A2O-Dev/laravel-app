@@ -5,11 +5,9 @@ import { Alert, Box, Button, Stack, TextField, Typography } from '@mui/material'
 import AuthLayout, { AuthLink } from '../../layouts/AuthLayout';
 import PasswordField from '../../components/PasswordField';
 import FormAlert from '../../components/FormAlert';
-import { apiErrors, firstError, firstResult } from '../../lib/auth';
-import { useAuth } from '../../contexts/AuthContext';
+import { apiErrors, firstError, firstResult, persistSession } from '../../lib/auth';
 
 export default function Login() {
-    const { setSession } = useAuth();
     const [form, setForm] = useState({ email: '', password: '' });
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
@@ -26,7 +24,7 @@ export default function Login() {
         try {
             const response = await axios.post('/api/auth/login', form);
             const user = firstResult(response);
-            setSession(user, user.token);
+            persistSession(user, user.token);
             router.visit('/dashboard');
         } catch (error) {
             setErrors(apiErrors(error));
@@ -39,7 +37,7 @@ export default function Login() {
         <AuthLayout
             title="Login"
             subtitle="Access your Laravel Demo dashboard."
-            footer={<>No account yet? <AuthLink href="/register">Create one</AuthLink></>}
+            footer={<>No account yet? <AuthLink href="/register">Create one 1</AuthLink></>}
         >
             <Box component="form" onSubmit={submit}>
                 <Stack spacing={2.5}>
