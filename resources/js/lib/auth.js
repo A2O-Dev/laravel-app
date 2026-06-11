@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
+const COOKIE_MAX_AGE = 2592000;
 
 function writeTokenCookie(token) {
     document.cookie = `${TOKEN_KEY}=${token}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
